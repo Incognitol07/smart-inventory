@@ -8,7 +8,7 @@ export default function Home() {
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-5xl font-bold text-deep-forest mb-4">
             Inventory management in plain English
-          </h1>
+          </h1> 
           <p className="text-xl text-deep-forest/80">
             Get told what to restock, what&apos;s selling, and what&apos;s
             losing you money.

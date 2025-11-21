@@ -98,7 +98,7 @@ export default function Home() {
                 src="/hero-image.png"
                 alt="An happy customer"
                 width={710}
-                height={1000}
+                height={1110}
                 className="w-full max-w-md h-auto rounded-2xl shadow-2xl"
               />
             </div>
@@ -107,7 +107,7 @@ export default function Home() {
       </section>
 
         {/* Stats Section */}
-      <section ref={statsRef} className="py-20 px-6 bg-white/50">
+      <section ref={statsRef} className="py-20 px-6 ">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div>
@@ -139,7 +139,7 @@ export default function Home() {
       </section>
 
       {/* Problem Section */}
-      <section className="py-20 px-6 bg-white/30">
+      <section className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-16 text-deep-forest">
             The problem most small businesses face
@@ -147,7 +147,7 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {/* Without */}
-            <div className="bg-white p-8 rounded-2xl border border-deep-forest/10">
+            <div className=" p-8 rounded-2xl border border-deep-forest/10">
               <div className="flex items-center gap-3 mb-6">
                 <AlertCircle size={28} className="text-deep-forest/60" />
                 <h3 className="text-2xl font-bold text-deep-forest">

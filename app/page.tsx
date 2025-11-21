@@ -26,14 +26,16 @@ export default function Home() {
       </section>
 
       {/* Problem/Solution Section */}
-      <section className="py-16" >
+      <section className="py-16">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-deep-forest mb-12 text-center">
             Why small retailers love us
           </h2>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-gray-100 p-8 rounded-lg">
-              <h3 className="text-xl font-bold text-gray-600 mb-4">Without SmartInventory</h3>
+              <h3 className="text-xl font-bold text-gray-600 mb-4">
+                Without SmartInventory
+              </h3>
               <ul className="text-gray-600 space-y-2">
                 <li>Confusing spreadsheets that take hours to update</li>
                 <li>Running out of stock on your best sellers</li>
@@ -42,7 +44,9 @@ export default function Home() {
               </ul>
             </div>
             <div className="bg-granny-green/10 p-8 rounded-lg">
-              <h3 className="text-xl font-bold text-deep-forest mb-4">With SmartInventory</h3>
+              <h3 className="text-xl font-bold text-deep-forest mb-4">
+                With SmartInventory
+              </h3>
               <ul className="text-deep-forest space-y-2">
                 <li>Clear insights in plain English</li>
                 <li>Alerts before you run out of popular items</li>
@@ -51,6 +55,21 @@ export default function Home() {
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-deep-forest text-white text-center">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-3xl font-bold mb-4">
+            Ready to simplify your inventory?
+          </h2>
+          <p className="text-xl mb-8">
+            Join thousands of small retailers using SmartInventory.
+          </p>
+          <button className="bg-granny-green text-deep-forest px-8 py-4 rounded-lg font-bold text-lg hover:bg-granny-green/90 transition-colors">
+            Start Now
+          </button>
         </div>
       </section>
     </div>

@@ -424,18 +424,14 @@ export default function Home() {
       >
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2
-            initial={false}
-            whileInView={{ opacity: 1, y: 0 }}
-            style={{ opacity: 0, transform: "translateY(20px)" }}
+            style={{ opacity: 1, transform: "translateY(20px)" }}
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-6xl font-bold mb-6"
           >
             Ready to simplify your inventory?
           </motion.h2>
           <motion.p
-            initial={false}
-            whileInView={{ opacity: 1, y: 0 }}
-            style={{ opacity: 0, transform: "translateY(20px)" }}
+            style={{ opacity: 1, transform: "translateY(20px)" }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-xl text-cream/80 mb-8 max-w-2xl mx-auto"
           >
@@ -443,29 +439,20 @@ export default function Home() {
             finances
           </motion.p>
           <motion.div
-            initial={false}
-            whileInView={{ opacity: 1 }}
-            style={{ opacity: 0 }}
-            viewport={{ once: true }}
+            style={{ opacity: 1 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <motion.button
-              initial={false}
-              whileInView={{ opacity: 1, y: 0 }}
-              style={{ opacity: 0, transform: "translateY(20px)" }}
-              transition={{ duration: 0.6 }}
+              style={{ opacity: 1 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-granny-green text-deep-forest px-10 py-4 rounded-full font-bold text-lg transition flex items-center justify-center gap-2"
+              className="bg-granny-green text-deep-forest px-10 py-4 rounded-full font-bold text-lg flex items-center justify-center gap-2"
             >
               Start Now for Free
               <ArrowRight size={20} />
             </motion.button>
             <motion.button
-              initial={false}
-              whileInView={{ opacity: 1, y: 0 }}
-              style={{ opacity: 0, transform: "translateY(20px)" }}
-              transition={{ duration: 0.6, delay: 0.05 }}
+              style={{ opacity: 1}}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="border-2 border-cream text-cream px-10 py-4 rounded-full font-bold text-lg transition"

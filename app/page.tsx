@@ -349,21 +349,16 @@ export default function Home() {
       <section id="features" className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <motion.h2
-            initial={false}
             whileInView={{ opacity: 1, y: 0 }}
             style={{ opacity: 0, transform: "translateY(20px)" }}
-            transition={{ duration: 0.6 }}
             viewport={{ once: true, amount: 0.3 }}
             className="text-4xl font-bold text-center mb-4 text-deep-forest"
           >
             Everything you need to take control
           </motion.h2>
           <motion.p
-            initial={false}
             whileInView={{ opacity: 1, y: 0 }}
             style={{ opacity: 0, transform: "translateY(20px)" }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            viewport={{ once: true, amount: 0.3 }}
             className="text-center text-deep-forest/70 text-lg mb-16 max-w-2xl mx-auto"
           >
             Designed specifically for small retailers who want to understand
@@ -372,10 +367,8 @@ export default function Home() {
 
           <motion.div
             className="grid md:grid-cols-3 gap-8"
-            initial={false}
             whileInView={{ opacity: 1 }}
             style={{ opacity: 0 }}
-            transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
             viewport={{ once: true, amount: 0.3 }}
           >
             {[
@@ -397,9 +390,7 @@ export default function Home() {
             ].map((feature, idx) => (
               <motion.div
                 key={idx}
-                initial={false}
-                whileInView={{ opacity: 1, scale: 1 }}
-                style={{ opacity: 0, transform: "scale(0.95)" }}
+                style={{ opacity: 1, transform: "scale(0.95)" }}
                 transition={{ duration: 0.5 }}
                 whileHover={{
                   y: -10,
@@ -425,10 +416,8 @@ export default function Home() {
 
       {/* CTA Section */}
       <motion.section
-        initial={false}
         whileInView={{ opacity: 1 }}
         style={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
         viewport={{ once: true, amount: 0.3 }}
         id="cta"
         className="py-24 px-6 bg-linear-to-br from-deep-forest to-deep-forest/90 text-cream"

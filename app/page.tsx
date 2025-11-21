@@ -1,22 +1,28 @@
-"use client"
+"use client";
 
-import { ArrowRight, BarChart3, AlertCircle, TrendingUp, Zap } from "lucide-react"
-import Image from "next/image"
-import { useState, useEffect, useRef } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import {
+  ArrowRight,
+  BarChart3,
+  AlertCircle,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function Home() {
   const [stats, setStats] = useState([
     { value: 0, target: 2500, prefix: "", suffix: "+" },
     { value: 0, target: 2100000, prefix: "$", suffix: "" },
     { value: 0, target: 15, prefix: "", suffix: " hrs" },
-  ])
+  ]);
 
-  const statsRef = useRef(null)
-  const heroRef = useRef(null)
-  const { scrollY } = useScroll()
+  const statsRef = useRef(null);
+  const heroRef = useRef(null);
+  const { scrollY } = useScroll();
 
-  const heroY = useTransform(scrollY, [0, 300], [0, 100])
+  const heroY = useTransform(scrollY, [0, 300], [0, 100]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -26,45 +32,45 @@ export default function Home() {
             setStats((prev) =>
               prev.map((stat) => {
                 if (stat.value < stat.target) {
-                  const increment = Math.ceil(stat.target / 100)
+                  const increment = Math.ceil(stat.target / 100);
                   return {
                     ...stat,
                     value: Math.min(stat.value + increment, stat.target),
-                  }
+                  };
                 }
-                return stat
-              }),
-            )
-          }, 50)
-          return () => clearInterval(interval)
+                return stat;
+              })
+            );
+          }, 50);
+          return () => clearInterval(interval);
         }
       },
-      { threshold: 0.5 },
-    )
+      { threshold: 0.5 }
+    );
 
     if (statsRef.current) {
-      observer.observe(statsRef.current)
+      observer.observe(statsRef.current);
     }
 
-    return () => observer.disconnect()
-  }, [])
+    return () => observer.disconnect();
+  }, []);
 
   const formatStat = (value: number, prefix: string, suffix: string) => {
     if (value >= 1000000) {
-      return `${prefix}${(value / 1000000).toFixed(1)}M${suffix}`
+      return `${prefix}${(value / 1000000).toFixed(1)}M${suffix}`;
     }
-    return `${prefix}${value.toLocaleString()}${suffix}`
-  }
+    return `${prefix}${value.toLocaleString()}${suffix}`;
+  };
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
-  }
+  };
 
   const fadeIn = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
-  }
+  };
 
   const staggerContainer = {
     hidden: { opacity: 0 },
@@ -75,12 +81,12 @@ export default function Home() {
         delayChildren: 0.2,
       },
     },
-  }
+  };
 
   const scaleIn = {
     hidden: { opacity: 0, scale: 0.95 },
     visible: { opacity: 1, scale: 1 },
-  }
+  };
 
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
@@ -91,18 +97,21 @@ export default function Home() {
         transition={{ duration: 0.5 }}
         className="sticky top-0 z-50 bg-cream/95 backdrop-blur border-b border-deep-forest/10"
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
           <motion.div
-            className="text-2xl font-bold text-deep-forest"
+            className="text-xl md:text-2xl font-bold text-deep-forest"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400 }}
           >
             SmartInventory
           </motion.div>
           <motion.button
-            whileHover={{ scale: 1.05, backgroundColor: "rgba(168, 224, 99, 0.8)" }}
+            whileHover={{
+              scale: 1.05,
+              backgroundColor: "rgba(168, 224, 99, 0.8)",
+            }}
             whileTap={{ scale: 0.95 }}
-            className="bg-granny-green text-deep-forest px-6 py-2 rounded-full font-semibold transition"
+            className="bg-granny-green text-deep-forest px-4 md:px-6 py-2 rounded-full font-semibold text-sm md:text-base transition"
           >
             Get Started
           </motion.button>
@@ -110,7 +119,11 @@ export default function Home() {
       </motion.nav>
 
       {/* Hero Section */}
-      <motion.section ref={heroRef} style={{ y: heroY }} className="relative py-12 md:py-24 px-4 md:px-6 overflow-hidden">
+      <motion.section
+        ref={heroRef}
+        style={{ y: heroY }}
+        className="relative py-12 md:py-24 px-4 md:px-6 overflow-hidden"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div
@@ -131,8 +144,9 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-lg md:text-xl text-deep-forest/70 mb-6 md:mb-8 max-w-xl leading-relaxed"
               >
-                Stop losing money to confusion. Get clear insights on what&apos;s selling, what&apos;s costing you, and
-                exactly what to do next—without the jargon or expensive accountants.
+                Stop losing money to confusion. Get clear insights on
+                what&apos;s selling, what&apos;s costing you, and exactly what
+                to do next—without the jargon or expensive accountants.
               </motion.p>
               <motion.div
                 variants={fadeInUp}
@@ -140,7 +154,7 @@ export default function Home() {
                 className="flex flex-col sm:flex-row gap-3 md:gap-4"
               >
                 <motion.button
-                  whileHover={{ scale: 1.05}}
+                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-deep-forest text-cream px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg transition flex items-center justify-center gap-2"
                 >
@@ -162,7 +176,10 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="flex justify-center lg:justify-end mt-8 lg:mt-0"
             >
-              <motion.div whileHover={{ scale: 1.02, rotateX: 5 }} transition={{ type: "spring", stiffness: 300 }}>
+              <motion.div
+                whileHover={{ scale: 1.02, rotateX: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
                 <Image
                   src="/hero-image.png"
                   alt="An happy customer"
@@ -196,9 +213,14 @@ export default function Home() {
               >
                 {formatStat(stats[0].value, stats[0].prefix, stats[0].suffix)}
               </motion.div>
-              <p className="text-deep-forest/70">Small businesses using SmartInventory</p>
+              <p className="text-deep-forest/70">
+                Small businesses using SmartInventory
+              </p>
             </motion.div>
-            <motion.div variants={scaleIn} transition={{ duration: 0.5, delay: 0.1 }}>
+            <motion.div
+              variants={scaleIn}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
               <motion.div
                 className="text-5xl font-bold text-granny-green mb-2"
                 initial={{ opacity: 0 }}
@@ -207,9 +229,14 @@ export default function Home() {
               >
                 {formatStat(stats[1].value, stats[1].prefix, stats[1].suffix)}
               </motion.div>
-              <p className="text-deep-forest/70">Money saved by our users yearly</p>
+              <p className="text-deep-forest/70">
+                Money saved by our users yearly
+              </p>
             </motion.div>
-            <motion.div variants={scaleIn} transition={{ duration: 0.5, delay: 0.2 }}>
+            <motion.div
+              variants={scaleIn}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
               <motion.div
                 className="text-5xl font-bold text-granny-green mb-2"
                 initial={{ opacity: 0 }}
@@ -218,7 +245,9 @@ export default function Home() {
               >
                 {formatStat(stats[2].value, stats[2].prefix, stats[2].suffix)}
               </motion.div>
-              <p className="text-deep-forest/70">Time saved per month per user</p>
+              <p className="text-deep-forest/70">
+                Time saved per month per user
+              </p>
             </motion.div>
           </div>
         </div>
@@ -243,13 +272,15 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
               variants={fadeInUp}
-              whileHover={{ y: -5, }}
+              whileHover={{ y: -5 }}
               transition={{ duration: 0.5 }}
               className="p-8 rounded-2xl border border-deep-forest/10"
             >
               <div className="flex items-center gap-3 mb-6">
                 <AlertCircle size={28} className="text-deep-forest/60" />
-                <h3 className="text-2xl font-bold text-deep-forest">Without SmartInventory</h3>
+                <h3 className="text-2xl font-bold text-deep-forest">
+                  Without SmartInventory
+                </h3>
               </div>
               <motion.ul
                 className="space-y-4 text-deep-forest/80"
@@ -264,7 +295,11 @@ export default function Home() {
                   "Hidden money leaks you never see",
                   "Hiring expensive accountants who use jargon",
                 ].map((item, idx) => (
-                  <motion.li key={idx} variants={fadeInUp} className="flex gap-3">
+                  <motion.li
+                    key={idx}
+                    variants={fadeInUp}
+                    className="flex gap-3"
+                  >
                     <span className="text-red-500 font-bold">×</span>
                     <span>{item}</span>
                   </motion.li>
@@ -277,13 +312,15 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
               variants={fadeInUp}
-              whileHover={{ y: -5, }}
+              whileHover={{ y: -5 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               className="bg-granny-green/10 p-8 rounded-2xl border-2 border-granny-green/40"
             >
               <div className="flex items-center gap-3 mb-6">
                 <Zap size={28} className="text-granny-green" />
-                <h3 className="text-2xl font-bold text-deep-forest">With SmartInventory</h3>
+                <h3 className="text-2xl font-bold text-deep-forest">
+                  With SmartInventory
+                </h3>
               </div>
               <motion.ul
                 className="space-y-4 text-deep-forest"
@@ -298,7 +335,11 @@ export default function Home() {
                   "See exactly which items are losing money",
                   "Daily guidance written in plain English",
                 ].map((item, idx) => (
-                  <motion.li key={idx} variants={fadeInUp} className="flex gap-3">
+                  <motion.li
+                    key={idx}
+                    variants={fadeInUp}
+                    className="flex gap-3"
+                  >
                     <span className="text-granny-green font-bold">✓</span>
                     <span>{item}</span>
                   </motion.li>
@@ -329,7 +370,8 @@ export default function Home() {
             transition={{ delay: 0.1 }}
             className="text-center text-deep-forest/70 text-lg mb-16 max-w-2xl mx-auto"
           >
-            Designed specifically for small retailers who want to understand their business without hiring help
+            Designed specifically for small retailers who want to understand
+            their business without hiring help
           </motion.p>
 
           <motion.div
@@ -372,7 +414,9 @@ export default function Home() {
                 >
                   <feature.icon size={28} className="text-granny-green" />
                 </motion.div>
-                <h3 className="text-xl font-bold text-deep-forest mb-3">{feature.title}</h3>
+                <h3 className="text-xl font-bold text-deep-forest mb-3">
+                  {feature.title}
+                </h3>
                 <p className="text-deep-forest/70">{feature.desc}</p>
               </motion.div>
             ))}
@@ -390,7 +434,10 @@ export default function Home() {
         className="py-24 px-6 bg-linear-to-br from-deep-forest to-deep-forest/90 text-cream"
       >
         <div className="max-w-4xl mx-auto text-center">
-          <motion.h2 variants={fadeInUp} className="text-5xl md:text-6xl font-bold mb-6">
+          <motion.h2
+            variants={fadeInUp}
+            className="text-5xl md:text-6xl font-bold mb-6"
+          >
             Ready to simplify your inventory?
           </motion.h2>
           <motion.p
@@ -398,7 +445,8 @@ export default function Home() {
             transition={{ delay: 0.1 }}
             className="text-xl text-cream/80 mb-8 max-w-2xl mx-auto"
           >
-            Join thousands of small retailers who finally understand their finances
+            Join thousands of small retailers who finally understand their
+            finances
           </motion.p>
           <motion.div
             variants={staggerContainer}
@@ -438,5 +486,5 @@ export default function Home() {
         </motion.div>
       </motion.section>
     </div>
-  )
+  );
 }

@@ -110,9 +110,9 @@ export default function Home() {
       </motion.nav>
 
       {/* Hero Section */}
-      <motion.section ref={heroRef} style={{ y: heroY }} className="relative py-24 px-6 overflow-hidden">
+      <motion.section ref={heroRef} style={{ y: heroY }} className="relative py-12 md:py-24 px-4 md:px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -122,14 +122,14 @@ export default function Home() {
               <motion.h1
                 variants={fadeInUp}
                 transition={{ duration: 0.6 }}
-                className="text-6xl md:text-7xl font-bold text-deep-forest mb-6 leading-tight"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-deep-forest mb-4 md:mb-6 leading-tight"
               >
                 Your inventory in plain English
               </motion.h1>
               <motion.p
                 variants={fadeInUp}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-xl text-deep-forest/70 mb-8 max-w-xl leading-relaxed"
+                className="text-lg md:text-xl text-deep-forest/70 mb-6 md:mb-8 max-w-xl leading-relaxed"
               >
                 Stop losing money to confusion. Get clear insights on what&apos;s selling, what&apos;s costing you, and
                 exactly what to do next—without the jargon or expensive accountants.
@@ -137,19 +137,19 @@ export default function Home() {
               <motion.div
                 variants={fadeInUp}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex flex-col sm:flex-row gap-3 md:gap-4"
               >
                 <motion.button
                   whileHover={{ scale: 1.05}}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-deep-forest text-cream px-8 py-4 rounded-full font-bold text-lg transition flex items-center justify-center gap-2"
+                  className="bg-deep-forest text-cream px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg transition flex items-center justify-center gap-2"
                 >
                   Start Now <ArrowRight size={20} />
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="border-2 border-deep-forest text-deep-forest px-8 py-4 rounded-full font-bold text-lg transition"
+                  className="border-2 border-deep-forest text-deep-forest px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg transition"
                 >
                   Login
                 </motion.button>
@@ -160,7 +160,7 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7, delay: 0.2 }}
-              className="flex justify-center md:justify-end"
+              className="flex justify-center lg:justify-end mt-8 lg:mt-0"
             >
               <motion.div whileHover={{ scale: 1.02, rotateX: 5 }} transition={{ type: "spring", stiffness: 300 }}>
                 <Image
@@ -168,7 +168,7 @@ export default function Home() {
                   alt="An happy customer"
                   width={710}
                   height={1110}
-                  className="w-full max-w-md h-auto rounded-2xl shadow-2xl"
+                  className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto rounded-2xl shadow-2xl"
                 />
               </motion.div>
             </motion.div>

@@ -67,11 +67,6 @@ export default function Home() {
     visible: { opacity: 1, y: 0 },
   };
 
-  const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-  };
-
   const staggerContainer = {
     hidden: { opacity: 0 },
     visible: {
@@ -354,20 +349,21 @@ export default function Home() {
       <section id="features" className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <motion.h2
-            initial="hidden"
-            whileInView="visible"
+            initial={false}
+            whileInView={{ opacity: 1, y: 0 }}
+            style={{ opacity: 0, transform: "translateY(20px)" }}
+            transition={{ duration: 0.6 }}
             viewport={{ once: true, amount: 0.3 }}
-            variants={fadeInUp}
             className="text-4xl font-bold text-center mb-4 text-deep-forest"
           >
             Everything you need to take control
           </motion.h2>
           <motion.p
-            initial="hidden"
-            whileInView="visible"
+            initial={false}
+            whileInView={{ opacity: 1, y: 0 }}
+            style={{ opacity: 0, transform: "translateY(20px)" }}
+            transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true, amount: 0.3 }}
-            variants={fadeInUp}
-            transition={{ delay: 0.1 }}
             className="text-center text-deep-forest/70 text-lg mb-16 max-w-2xl mx-auto"
           >
             Designed specifically for small retailers who want to understand
@@ -376,9 +372,10 @@ export default function Home() {
 
           <motion.div
             className="grid md:grid-cols-3 gap-8"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
+            initial={false}
+            whileInView={{ opacity: 1 }}
+            style={{ opacity: 0 }}
+            transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
             viewport={{ once: true, amount: 0.3 }}
           >
             {[
@@ -400,11 +397,13 @@ export default function Home() {
             ].map((feature, idx) => (
               <motion.div
                 key={idx}
-                variants={scaleIn}
+                initial={false}
+                whileInView={{ opacity: 1, scale: 1 }}
+                style={{ opacity: 0, transform: "scale(0.95)" }}
+                transition={{ duration: 0.5 }}
                 whileHover={{
                   y: -10,
                 }}
-                transition={{ duration: 0.3 }}
                 className="bg-white p-8 rounded-xl border border-deep-forest/10 transition"
               >
                 <motion.div
@@ -426,37 +425,47 @@ export default function Home() {
 
       {/* CTA Section */}
       <motion.section
-        initial="hidden"
-        whileInView="visible"
+        initial={false}
+        whileInView={{ opacity: 1 }}
+        style={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
         viewport={{ once: true, amount: 0.3 }}
-        variants={fadeIn}
         id="cta"
         className="py-24 px-6 bg-linear-to-br from-deep-forest to-deep-forest/90 text-cream"
       >
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2
-            variants={fadeInUp}
+            initial={false}
+            whileInView={{ opacity: 1, y: 0 }}
+            style={{ opacity: 0, transform: "translateY(20px)" }}
+            transition={{ duration: 0.6 }}
             className="text-4xl md:text-6xl font-bold mb-6"
           >
             Ready to simplify your inventory?
           </motion.h2>
           <motion.p
-            variants={fadeInUp}
-            transition={{ delay: 0.1 }}
+            initial={false}
+            whileInView={{ opacity: 1, y: 0 }}
+            style={{ opacity: 0, transform: "translateY(20px)" }}
+            transition={{ duration: 0.6, delay: 0.1 }}
             className="text-xl text-cream/80 mb-8 max-w-2xl mx-auto"
           >
             Join thousands of small retailers who finally understand their
             finances
           </motion.p>
           <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
+            initial={false}
+            whileInView={{ opacity: 1 }}
+            style={{ opacity: 0 }}
+            transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
             viewport={{ once: true }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <motion.button
-              variants={fadeInUp}
+              initial={false}
+              whileInView={{ opacity: 1, y: 0 }}
+              style={{ opacity: 0, transform: "translateY(20px)" }}
+              transition={{ duration: 0.6 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-granny-green text-deep-forest px-10 py-4 rounded-full font-bold text-lg transition flex items-center justify-center gap-2"
@@ -465,8 +474,10 @@ export default function Home() {
               <ArrowRight size={20} />
             </motion.button>
             <motion.button
-              variants={fadeInUp}
-              transition={{ delay: 0.05 }}
+              initial={false}
+              whileInView={{ opacity: 1, y: 0 }}
+              style={{ opacity: 0, transform: "translateY(20px)" }}
+              transition={{ duration: 0.6, delay: 0.05 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="border-2 border-cream text-cream px-10 py-4 rounded-full font-bold text-lg transition"
@@ -479,21 +490,33 @@ export default function Home() {
 
       {/* Footer */}
       <motion.section
-        initial="hidden"
-        whileInView="visible"
+        initial={false}
+        whileInView={{ opacity: 1 }}
+        style={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
         viewport={{ once: true, amount: 0.3 }}
-        variants={fadeIn}
         className="py-12 px-4 md:px-6 bg-cream border-t border-deep-forest/10"
       >
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
-            variants={fadeInUp}
-            transition={{ delay: 0.2 }}
+            initial={false}
+            whileInView={{ opacity: 1, y: 0 }}
+            style={{ opacity: 0, transform: "translateY(20px)" }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="mb-4"
           >
             <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold text-deep-forest">
               SmartInventory
             </h2>
+          </motion.div>
+          <motion.div
+            initial={false}
+            whileInView={{ opacity: 1, y: 0 }}
+            style={{ opacity: 0, transform: "translateY(20px)" }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-deep-forest/60 text-sm"
+          >
+            <p>&copy; 2025 SmartInventory. All rights reserved.</p>
           </motion.div>
         </div>
       </motion.section>

@@ -436,7 +436,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2
             variants={fadeInUp}
-            className="text-5xl md:text-6xl font-bold mb-6"
+            className="text-4xl md:text-6xl font-bold mb-6"
           >
             Ready to simplify your inventory?
           </motion.h2>
@@ -475,15 +475,27 @@ export default function Home() {
             </motion.button>
           </motion.div>
         </div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="pt-8 text-center text-cream/60 text-sm"
-        >
-          <p>&copy; 2025 SmartInventory. All rights reserved.</p>
-        </motion.div>
+      </motion.section>
+
+      {/* Footer */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={fadeIn}
+        className="py-12 px-4 md:px-6 bg-cream border-t border-deep-forest/10"
+      >
+        <div className="max-w-7xl mx-auto text-center">
+          <motion.div
+            variants={fadeInUp}
+            transition={{ delay: 0.2 }}
+            className="mb-4"
+          >
+            <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold text-deep-forest">
+              SmartInventory
+            </h2>
+          </motion.div>
+        </div>
       </motion.section>
     </div>
   );

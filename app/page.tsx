@@ -10,8 +10,8 @@ export default function Home() {
             Inventory management in plain English
           </h1>
           <p className="text-xl text-deep-forest/80">
-            Get told what to restock, what&apos;s selling, and what&apos;s
-            losing you money.
+            Get told what to restock, what&apos;s selling, and what&apos;s making
+            you lose money.
           </p>
         </div>
         <div className="flex-1 flex justify-center">
@@ -61,7 +61,7 @@ export default function Home() {
       {/* CTA Section */}
       <section
         id="cta"
-        className="relative py-20 h-screen px-4 md:px-8 lg:px-12 bg-cream flex flex-col"
+        className="relative py-20 px-4 md:px-8 lg:px-12 bg-cream"
       >
         <div className="container mx-auto max-w-8xl grow">
           <div className="flex flex-col items-center justify-center text-center mb-16">
@@ -72,9 +72,9 @@ export default function Home() {
               </h2>
             </div>
             <div className="mt-12 text-center">
-              <p className="text-xl mb-8 text-deep-forest">
+              {/* <p className="text-xl mb-8 text-deep-forest">
                 Join thousands of small retailers using SmartInventory.
-              </p>
+              </p> */}
               <button className="bg-granny-green text-deep-forest px-8 py-4 rounded-lg font-bold text-lg hover:bg-granny-green/90 transition-colors">
                 Start Now
               </button>
@@ -82,6 +82,17 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      {/* <footer className="bg-deep-forest text-white py-16 rounded-t-lg">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center">
+            <div className="text-9xl font-bold text-granny-green mb-4">
+              SmartInventory
+            </div>
+          </div>
+        </div>
+      </footer> */}
     </div>
   );
 }

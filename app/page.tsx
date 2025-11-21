@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ArrowRight,
   BarChart3,
@@ -6,8 +8,55 @@ import {
   Zap,
 } from "lucide-react";
 import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 
 export default function Home() {
+  const [stats, setStats] = useState([
+    { value: 0, target: 2500, prefix: "", suffix: "+" },
+    { value: 0, target: 2100000, prefix: "$", suffix: "" },
+    { value: 0, target: 15, prefix: "", suffix: " hrs" },
+  ]);
+
+  const statsRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          const interval = setInterval(() => {
+            setStats((prev) =>
+              prev.map((stat) => {
+                if (stat.value < stat.target) {
+                  const increment = Math.ceil(stat.target / 100);
+                  return {
+                    ...stat,
+                    value: Math.min(stat.value + increment, stat.target),
+                  };
+                }
+                return stat;
+              })
+            );
+          }, 50);
+          return () => clearInterval(interval);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const formatStat = (value: number, prefix: string, suffix: string) => {
+    if (value >= 1000000) {
+      return `${prefix}${(value / 1000000).toFixed(1)}M${suffix}`;
+    }
+    return `${prefix}${value.toLocaleString()}${suffix}`;
+  };
+
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
       {/* Navigation */}
@@ -52,6 +101,38 @@ export default function Home() {
                 height={1000}
                 className="w-full max-w-md h-auto rounded-2xl shadow-2xl"
               />
+            </div>
+          </div>
+        </div>
+      </section>
+
+        {/* Stats Section */}
+      <section ref={statsRef} className="py-20 px-6 bg-white/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-5xl font-bold text-granny-green mb-2">
+                {formatStat(stats[0].value, stats[0].prefix, stats[0].suffix)}
+              </div>
+              <p className="text-deep-forest/70">
+                Small businesses using SmartInventory
+              </p>
+            </div>
+            <div>
+              <div className="text-5xl font-bold text-granny-green mb-2">
+                {formatStat(stats[1].value, stats[1].prefix, stats[1].suffix)}
+              </div>
+              <p className="text-deep-forest/70">
+                Money saved by our users yearly
+              </p>
+            </div>
+            <div>
+              <div className="text-5xl font-bold text-granny-green mb-2">
+                {formatStat(stats[2].value, stats[2].prefix, stats[2].suffix)}
+              </div>
+              <p className="text-deep-forest/70">
+                Time saved per month per user
+              </p>
             </div>
           </div>
         </div>
@@ -181,37 +262,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-20 px-6 bg-white/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div>
-              <div className="text-5xl font-bold text-granny-green mb-2">
-                2,500+
-              </div>
-              <p className="text-deep-forest/70">
-                Small businesses using SmartInventory
-              </p>
-            </div>
-            <div>
-              <div className="text-5xl font-bold text-granny-green mb-2">
-                $2.1M
-              </div>
-              <p className="text-deep-forest/70">
-                Money saved by our users yearly
-              </p>
-            </div>
-            <div>
-              <div className="text-5xl font-bold text-granny-green mb-2">
-                15 hrs
-              </div>
-              <p className="text-deep-forest/70">
-                Time saved per month per user
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+    
 
       {/* CTA Section */}
       <section
@@ -228,18 +279,18 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-granny-green text-deep-forest px-10 py-4 rounded-full font-bold text-lg hover:bg-granny-green/90 transition flex items-center justify-center gap-2">
-              Start Now for Free<ArrowRight size={20} />
+              Start Now for Free
+              <ArrowRight size={20} />
             </button>
             <button className="border-2 border-cream text-cream px-10 py-4 rounded-full font-bold text-lg hover:bg-cream/10 transition">
               Login
             </button>
           </div>
         </div>
-         <div className="pt-8 text-center text-cream/60 text-sm">
-            <p>&copy; 2025 SmartInventory. All rights reserved.</p>
-          </div>
+        <div className="pt-8 text-center text-cream/60 text-sm">
+          <p>&copy; 2025 SmartInventory. All rights reserved.</p>
+        </div>
       </section>
-
     </div>
   );
 }

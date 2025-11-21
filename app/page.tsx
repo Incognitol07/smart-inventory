@@ -17,7 +17,7 @@ export default function Home() {
         <div className="flex-1 flex justify-center">
           <Image
             src="/hero-image.png"
-            alt="SmartInventory Dashboard"
+            alt="A happy customer"
             width={320}
             height={480}
             className="rounded-lg shadow-lg"

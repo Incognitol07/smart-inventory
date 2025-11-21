@@ -446,7 +446,6 @@ export default function Home() {
             initial={false}
             whileInView={{ opacity: 1 }}
             style={{ opacity: 0 }}
-            transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
             viewport={{ once: true }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >

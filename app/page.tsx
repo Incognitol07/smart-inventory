@@ -59,17 +59,27 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-deep-forest text-white text-center">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to simplify your inventory?
-          </h2>
-          <p className="text-xl mb-8">
-            Join thousands of small retailers using SmartInventory.
-          </p>
-          <button className="bg-granny-green text-deep-forest px-8 py-4 rounded-lg font-bold text-lg hover:bg-granny-green/90 transition-colors">
-            Start Now
-          </button>
+      <section
+        id="cta"
+        className="relative py-20 h-screen px-4 md:px-8 lg:px-12 bg-cream flex flex-col"
+      >
+        <div className="container mx-auto max-w-8xl grow">
+          <div className="flex flex-col items-center justify-center text-center mb-16">
+            <div className="flex items-center justify-center">
+              <h2 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-deep-forest">
+                Ready to simplify
+                <br className="md:hidden" /> your inventory?
+              </h2>
+            </div>
+            <div className="mt-12 text-center">
+              <p className="text-xl mb-8 text-deep-forest">
+                Join thousands of small retailers using SmartInventory.
+              </p>
+              <button className="bg-granny-green text-deep-forest px-8 py-4 rounded-lg font-bold text-lg hover:bg-granny-green/90 transition-colors">
+                Start Now
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </div>

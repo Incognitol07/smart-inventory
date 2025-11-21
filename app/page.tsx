@@ -1,58 +1,213 @@
+import {
+  ArrowRight,
+  BarChart3,
+  AlertCircle,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-cream">
-      {/* Hero */}
-      <section className="flex flex-col md:flex-row items-center py-20 px-6 max-w-6xl mx-auto gap-8">
-        <div className="flex-1 text-center md:text-left">
-          <h1 className="text-5xl font-bold text-deep-forest mb-4">
-            Inventory management in plain English
-          </h1>
-          <p className="text-xl text-deep-forest/80">
-            Get told what to restock, what&apos;s selling, and what&apos;s making
-            you lose money.
-          </p>
+    <div className="min-h-screen bg-cream text-deep-forest">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 bg-cream/95 backdrop-blur border-b border-deep-forest/10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="text-2xl font-bold text-deep-forest">
+            SmartInventory
+          </div>
+          <button className="bg-granny-green text-deep-forest px-6 py-2 rounded-full font-semibold hover:bg-granny-green/90 transition">
+            Get Started
+          </button>
         </div>
-        <div className="flex-1 flex justify-center">
-          <Image
-            src="/hero-image.png"
-            alt="A happy customer"
-            width={320}
-            height={480}
-            className="rounded-lg shadow-lg"
-          />
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative py-24 px-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 className="text-6xl md:text-7xl font-bold text-deep-forest mb-6 leading-tight">
+                Your finances in plain English
+              </h1>
+              <p className="text-xl text-deep-forest/70 mb-8 max-w-xl leading-relaxed">
+                Stop losing money to confusion. Get clear insights on
+                what&apos;s selling, what&apos;s costing you, and exactly what
+                to do next—without the jargon or expensive accountants.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="bg-deep-forest text-cream px-8 py-4 rounded-full font-bold text-lg hover:bg-deep-forest/90 transition flex items-center justify-center gap-2">
+                  Start Now <ArrowRight size={20} />
+                </button>
+                <button className="border-2 border-deep-forest text-deep-forest px-8 py-4 rounded-full font-bold text-lg hover:bg-deep-forest/5 transition">
+                  Login
+                </button>
+              </div>
+            </div>
+            <div className="flex justify-center md:justify-end">
+              <Image
+                src="/hero-image.png"
+                alt="An happy customer"
+                width={710}
+                height={1000}
+                className="w-full max-w-md h-auto rounded-2xl shadow-2xl"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Problem/Solution Section */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-deep-forest mb-12 text-center">
-            Why small retailers love us
+      {/* Problem Section */}
+      <section className="py-20 px-6 bg-white/30">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-16 text-deep-forest">
+            The problem most small businesses face
           </h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-gray-100 p-8 rounded-lg">
-              <h3 className="text-xl font-bold text-gray-600 mb-4">
-                Without SmartInventory
-              </h3>
-              <ul className="text-gray-600 space-y-2">
-                <li>Confusing spreadsheets that take hours to update</li>
-                <li>Running out of stock on your best sellers</li>
-                <li>Not knowing which items are losing money</li>
-                <li>Guessing when to reorder supplies</li>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* Without */}
+            <div className="bg-white p-8 rounded-2xl border border-deep-forest/10">
+              <div className="flex items-center gap-3 mb-6">
+                <AlertCircle size={28} className="text-deep-forest/60" />
+                <h3 className="text-2xl font-bold text-deep-forest">
+                  Without SmartInventory
+                </h3>
+              </div>
+              <ul className="space-y-4 text-deep-forest/80">
+                <li className="flex gap-3">
+                  <span className="text-red-500 font-bold">×</span>
+                  <span>Hours spent on confusing spreadsheets</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-red-500 font-bold">×</span>
+                  <span>Running out of stock on bestsellers</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-red-500 font-bold">×</span>
+                  <span>Hidden money leaks you never see</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-red-500 font-bold">×</span>
+                  <span>Hiring expensive accountants who use jargon</span>
+                </li>
               </ul>
             </div>
-            <div className="bg-granny-green/10 p-8 rounded-lg">
-              <h3 className="text-xl font-bold text-deep-forest mb-4">
-                With SmartInventory
-              </h3>
-              <ul className="text-deep-forest space-y-2">
-                <li>Clear insights in plain English</li>
-                <li>Alerts before you run out of popular items</li>
-                <li>Know exactly what&apos;s profitable and what&apos;s not</li>
-                <li>Get daily guidance on what to do next</li>
+
+            {/* With */}
+            <div className="bg-granny-green/10 p-8 rounded-2xl border-2 border-granny-green/40">
+              <div className="flex items-center gap-3 mb-6">
+                <Zap size={28} className="text-granny-green" />
+                <h3 className="text-2xl font-bold text-deep-forest">
+                  With SmartInventory
+                </h3>
+              </div>
+              <ul className="space-y-4 text-deep-forest">
+                <li className="flex gap-3">
+                  <span className="text-granny-green font-bold">✓</span>
+                  <span>One-click answers to your business questions</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-granny-green font-bold">✓</span>
+                  <span>Smart alerts before you run out</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-granny-green font-bold">✓</span>
+                  <span>See exactly which items are losing money</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-granny-green font-bold">✓</span>
+                  <span>Daily guidance written in plain English</span>
+                </li>
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-4 text-deep-forest">
+            Everything you need to take control
+          </h2>
+          <p className="text-center text-deep-forest/70 text-lg mb-16 max-w-2xl mx-auto">
+            Designed specifically for small retailers who want to understand
+            their business without hiring help
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Feature 1 */}
+            <div className="bg-white p-8 rounded-xl border border-deep-forest/10 hover:border-granny-green/40 transition">
+              <div className="w-14 h-14 bg-granny-green/20 rounded-lg flex items-center justify-center mb-6">
+                <BarChart3 size={28} className="text-granny-green" />
+              </div>
+              <h3 className="text-xl font-bold text-deep-forest mb-3">
+                Real-time Dashboard
+              </h3>
+              <p className="text-deep-forest/70">
+                See your inventory and finances at a glance. No reports to
+                generate, just instant clarity on what matters.
+              </p>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="bg-white p-8 rounded-xl border border-deep-forest/10 hover:border-granny-green/40 transition">
+              <div className="w-14 h-14 bg-granny-green/20 rounded-lg flex items-center justify-center mb-6">
+                <AlertCircle size={28} className="text-granny-green" />
+              </div>
+              <h3 className="text-xl font-bold text-deep-forest mb-3">
+                Smart Alerts
+              </h3>
+              <p className="text-deep-forest/70">
+                Get notified before you run out of stock on bestsellers. Never
+                miss a selling opportunity again.
+              </p>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="bg-white p-8 rounded-xl border border-deep-forest/10 hover:border-granny-green/40 transition">
+              <div className="w-14 h-14 bg-granny-green/20 rounded-lg flex items-center justify-center mb-6">
+                <TrendingUp size={28} className="text-granny-green" />
+              </div>
+              <h3 className="text-xl font-bold text-deep-forest mb-3">
+                Profit Insights
+              </h3>
+              <p className="text-deep-forest/70">
+                Know exactly which items are making you money and which are
+                draining it. Simple, honest analysis.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-20 px-6 bg-white/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-5xl font-bold text-granny-green mb-2">
+                2,500+
+              </div>
+              <p className="text-deep-forest/70">
+                Small businesses using SmartInventory
+              </p>
+            </div>
+            <div>
+              <div className="text-5xl font-bold text-granny-green mb-2">
+                $2.1M
+              </div>
+              <p className="text-deep-forest/70">
+                Money saved by our users yearly
+              </p>
+            </div>
+            <div>
+              <div className="text-5xl font-bold text-granny-green mb-2">
+                15 hrs
+              </div>
+              <p className="text-deep-forest/70">
+                Time saved per month per user
+              </p>
             </div>
           </div>
         </div>
@@ -61,38 +216,30 @@ export default function Home() {
       {/* CTA Section */}
       <section
         id="cta"
-        className="relative py-20 px-4 md:px-8 lg:px-12 bg-cream"
+        className="py-24 px-6 bg-linear-to-br from-deep-forest to-deep-forest/90 text-cream"
       >
-        <div className="container mx-auto max-w-8xl grow">
-          <div className="flex flex-col items-center justify-center text-center mb-16">
-            <div className="flex items-center justify-center">
-              <h2 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-deep-forest">
-                Ready to simplify
-                <br className="md:hidden" /> your inventory?
-              </h2>
-            </div>
-            <div className="mt-12 text-center">
-              {/* <p className="text-xl mb-8 text-deep-forest">
-                Join thousands of small retailers using SmartInventory.
-              </p> */}
-              <button className="bg-granny-green text-deep-forest px-8 py-4 rounded-lg font-bold text-lg hover:bg-granny-green/90 transition-colors">
-                Start Now
-              </button>
-            </div>
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-5xl md:text-6xl font-bold mb-6">
+            Ready to simplify your inventory?
+          </h2>
+          <p className="text-xl text-cream/80 mb-8 max-w-2xl mx-auto">
+            Join thousands of small retailers who finally understand their
+            finances
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-granny-green text-deep-forest px-10 py-4 rounded-full font-bold text-lg hover:bg-granny-green/90 transition flex items-center justify-center gap-2">
+              Start Now for Free<ArrowRight size={20} />
+            </button>
+            <button className="border-2 border-cream text-cream px-10 py-4 rounded-full font-bold text-lg hover:bg-cream/10 transition">
+              Login
+            </button>
           </div>
         </div>
+         <div className="pt-8 text-center text-cream/60 text-sm">
+            <p>&copy; 2025 SmartInventory. All rights reserved.</p>
+          </div>
       </section>
 
-      {/* Footer */}
-      {/* <footer className="bg-deep-forest text-white py-16 rounded-t-lg">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center">
-            <div className="text-9xl font-bold text-granny-green mb-4">
-              SmartInventory
-            </div>
-          </div>
-        </div>
-      </footer> */}
     </div>
   );
 }

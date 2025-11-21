@@ -124,7 +124,7 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
                 className="text-6xl md:text-7xl font-bold text-deep-forest mb-6 leading-tight"
               >
-                Your finances in plain English
+                Your inventory in plain English
               </motion.h1>
               <motion.p
                 variants={fadeInUp}

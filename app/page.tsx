@@ -420,46 +420,48 @@ export default function Home() {
         style={{ opacity: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         id="cta"
-        className="py-24 px-6 bg-linear-to-br from-deep-forest to-deep-forest/90 text-cream"
+        className="py-24 px-6"
       >
         <div className="max-w-4xl mx-auto text-center">
-          <motion.h2
-            style={{ opacity: 1, transform: "translateY(20px)" }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-bold mb-6"
-          >
-            Ready to simplify your inventory?
-          </motion.h2>
-          <motion.p
-            style={{ opacity: 1, transform: "translateY(20px)" }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-xl text-cream/80 mb-8 max-w-2xl mx-auto"
-          >
-            Join thousands of small retailers who finally understand their
-            finances
-          </motion.p>
-          <motion.div
-            style={{ opacity: 1 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <motion.button
+          <div className="bg-linear-to-br from-deep-forest to-deep-forest/90 text-cream rounded-2xl p-10 md:p-14 shadow-xl">
+            <motion.h2
+              style={{ opacity: 1, transform: "translateY(20px)" }}
+              transition={{ duration: 0.6 }}
+              className="text-4xl md:text-6xl font-bold mb-6"
+            >
+              Ready to simplify your inventory?
+            </motion.h2>
+            <motion.p
+              style={{ opacity: 1, transform: "translateY(20px)" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-xl text-cream/80 mb-8 max-w-2xl mx-auto"
+            >
+              Join thousands of small retailers who finally understand their
+              finances
+            </motion.p>
+            <motion.div
               style={{ opacity: 1 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-granny-green text-deep-forest px-10 py-4 rounded-full font-bold text-lg flex items-center justify-center gap-2"
+              className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              Start Now for Free
-              <ArrowRight size={20} />
-            </motion.button>
-            <motion.button
-              style={{ opacity: 1}}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="border-2 border-cream text-cream px-10 py-4 rounded-full font-bold text-lg transition"
-            >
-              Login
-            </motion.button>
-          </motion.div>
+              <motion.button
+                style={{ opacity: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-granny-green text-deep-forest px-10 py-4 rounded-full font-bold text-lg flex items-center justify-center gap-2"
+              >
+                Start Now for Free
+                <ArrowRight size={20} />
+              </motion.button>
+              <motion.button
+                style={{ opacity: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="border-2 border-cream text-cream px-10 py-4 rounded-full font-bold text-lg transition"
+              >
+                Login
+              </motion.button>
+            </motion.div>
+          </div>
         </div>
       </motion.section>
 
@@ -470,7 +472,7 @@ export default function Home() {
         style={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
         viewport={{ once: true, amount: 0.3 }}
-        className="py-12 px-4 md:px-6 bg-cream border-t border-deep-forest/10"
+        className="py-12 px-4 md:px-6 bg-cream"
       >
         <div className="max-w-7xl mx-auto text-center">
           <motion.div

@@ -65,18 +65,17 @@ export default function SalesPage() {
 
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-deep-forest mb-2">
+              <h1 className="text-3xl sm:text-4xl font-bold text-deep-forest mb-2">
                 Sales
               </h1>
               <p className="text-deep-forest/60">
@@ -123,7 +122,7 @@ export default function SalesPage() {
           </div>
 
           {/* Summary Stats */}
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {
                 label: "Total Sales",
@@ -250,7 +249,7 @@ export default function SalesPage() {
 
           {/* Top Products */}
           <motion.div
-            className="bg-white p-6 rounded-xl border border-deep-forest/10"
+            className="bg-white p-6 rounded-xl border border-deep-forest/10 hidden md:block"
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.3 }}
           >
@@ -300,6 +299,46 @@ export default function SalesPage() {
               </table>
             </div>
           </motion.div>
+
+          {/* Mobile Top Products Cards */}
+          <div className="md:hidden space-y-4">
+            <h3 className="text-lg font-bold text-deep-forest mb-4">
+              Top Selling Products
+            </h3>
+            {topProducts.map((product, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="bg-white p-4 rounded-xl border border-deep-forest/10"
+              >
+                <h4 className="text-lg font-semibold text-deep-forest mb-3">
+                  {product.name}
+                </h4>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-deep-forest/60">Sold</p>
+                    <p className="font-medium text-deep-forest">
+                      {product.sold}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-deep-forest/60">Revenue</p>
+                    <p className="font-medium text-deep-forest">
+                      ₦{product.revenue.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-deep-forest/60">Profit</p>
+                    <p className="font-medium text-deep-forest">
+                      ₦{product.profit.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       </div>
 
@@ -312,7 +351,6 @@ export default function SalesPage() {
           // Handle export
         }}
       />
-
     </div>
   );
 }

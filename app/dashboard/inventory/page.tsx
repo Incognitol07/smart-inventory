@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import ProductModal from "../components/modals/ProductModal";
-import DeleteProductModal from "../components/modals/DeleteProductModal";
+import ProductModal from "../../components/modals/ProductModal";
+import DeleteProductModal from "../../components/modals/DeleteProductModal";
 
 type Product = {
   id: number;
@@ -18,7 +17,6 @@ type Product = {
 };
 
 export default function InventoryPage() {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -94,54 +92,6 @@ export default function InventoryPage() {
 
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
-      {/* Top Navigation */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-deep-forest/10 px-6 py-4"
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <motion.h1
-              className="text-2xl font-bold text-deep-forest"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              SmartInventory
-            </motion.h1>
-            <p className="text-sm text-deep-forest/60">
-              Monday, November 25, 2025
-            </p>
-          </div>
-          <div className="flex items-center gap-6">
-            {/* Navigation Tabs */}
-            <nav className="flex gap-6">
-              <button
-                onClick={() => router.push("/dashboard")}
-                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
-              >
-                Dashboard
-              </button>
-              <button className="text-deep-forest font-semibold border-b-2 border-granny-green pb-1">
-                Inventory
-              </button>
-              <button
-                onClick={() => router.push("/sales")}
-                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
-              >
-                Sales
-              </button>
-              <button
-                onClick={() => router.push("/alerts")}
-                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
-              >
-                Alerts
-              </button>
-            </nav>
-          </div>
-        </div>
-      </motion.div>
-
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <motion.div
@@ -229,8 +179,8 @@ export default function InventoryPage() {
                       transition={{ delay: idx * 0.05 }}
                       className="border-t border-deep-forest/5 hover:bg-deep-forest/5"
                       onClick={() => {
-                        setSelectedProduct(item)
-                        setShowViewModal(true)
+                        setSelectedProduct(item);
+                        setShowViewModal(true);
                       }}
                     >
                       <td className="py-4 px-6 text-deep-forest font-medium">
@@ -362,7 +312,9 @@ export default function InventoryPage() {
         isOpen={showViewModal}
         mode="view"
         product={selectedProduct}
-        onClose={() => {setShowViewModal(false)}}
+        onClose={() => {
+          setShowViewModal(false);
+        }}
       />
 
       <DeleteProductModal

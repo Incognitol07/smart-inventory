@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, Package, DollarSign, Bell, Lightbulb } from "lucide-react";
+import { TrendingUp, Package, DollarSign } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -14,19 +14,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useRouter } from "next/navigation";
 import QuickSaleModal from "../components/modals/QuickSaleModal";
-import RestockModal from "../components/modals/RestockModal";
-import NotificationsModal from "../components/modals/NotificationsModal";
-import ActionTipsModal from "../components/modals/ActionTipsModal";
-
-type TodoItem = {
-  id: number;
-  priority: string;
-  title: string;
-  description: string;
-  action: string;
-};
 
 // Mock data
 const salesData = [
@@ -37,33 +25,6 @@ const salesData = [
   { day: "Fri", sales: 2181, profit: 1300 },
   { day: "Sat", sales: 2500, profit: 1400 },
   { day: "Sun", sales: 2100, profit: 1200 },
-];
-
-const todoItems = [
-  {
-    id: 1,
-    priority: "urgent",
-    title: "Restock cooking oil",
-    description:
-      "You have 2 bottles left. You usually sell 5 per week. Restock today or lose ₦15,000 in weekend sales.",
-    action: "Restock now",
-  },
-  {
-    id: 2,
-    priority: "high",
-    title: "Expiring items alert",
-    description:
-      "₦12,600 worth of goods expire in 2 weeks. Move them to the front or mark down 20%.",
-    action: "View list",
-  },
-  {
-    id: 3,
-    priority: "medium",
-    title: "Slow-moving stock",
-    description:
-      "You bought 10 cartons of Peak Milk last month but only sold 4. That's ₦12,000 tied up.",
-    action: "Review",
-  },
 ];
 
 const insights = [
@@ -132,116 +93,12 @@ const getTimeBasedGreeting = () => {
 };
 
 export default function DashboardPage() {
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickSale, setShowQuickSale] = useState(false);
-  const [showRestockModal, setShowRestockModal] = useState(false);
-  const [showActionTips, setShowActionTips] = useState(true); // Show on first visit
-  const [selectedAlert, setSelectedAlert] = useState<TodoItem | null>(null);
   const storeName = "Hemline";
   const greeting = useMemo(() => getTimeBasedGreeting(), []);
-  const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-cream text-deep-forest">
-      {/* Top Navigation */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-deep-forest/10 px-6 py-4"
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <motion.h1
-              className="text-2xl font-bold text-deep-forest"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              SmartInventory
-            </motion.h1>
-            <p className="text-sm text-deep-forest/60">
-              Monday, November 25, 2025
-            </p>
-          </div>
-          <div className="flex items-center gap-6">
-            {/* Navigation Tabs */}
-            <nav className="flex gap-6">
-              <button className="text-deep-forest font-semibold border-b-2 border-granny-green pb-1">
-                Dashboard
-              </button>
-              <button
-                onClick={() => router.push("/inventory")}
-                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
-              >
-                Inventory
-              </button>
-              <button
-                onClick={() => router.push("/sales")}
-                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
-              >
-                Sales
-              </button>
-              <button
-                onClick={() => router.push("/alerts")}
-                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
-              >
-                Alerts
-              </button>
-            </nav>
-            {/* Action Tips Button */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowActionTips(true)}
-              className="p-2 hover:bg-deep-forest/5 rounded-full transition"
-            >
-              <Lightbulb size={20} className="text-deep-forest" />
-            </motion.button>
-            {/* Notification Bell Icon */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 hover:bg-deep-forest/5 rounded-full transition"
-            >
-              <Bell size={20} className="text-deep-forest" />
-              {/* Notification badge showing count */}
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"
-              >
-                {todoItems.length}
-              </motion.div>
-            </motion.button>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Notification Modal/Panel */}
-      <NotificationsModal
-        isOpen={showNotifications}
-        onClose={() => setShowNotifications(false)}
-        actionItems={todoItems.map((item) => ({
-          id: item.id,
-          title: item.title,
-          message: item.description,
-          priority: item.priority,
-          action: item.action,
-        }))}
-        onAction={(item) => {
-          setSelectedAlert({
-            id: item.id,
-            title: item.title,
-            description: item.message,
-            priority: item.priority,
-            action: item.action,
-          });
-          if (item.action === "Restock now") {
-            setShowRestockModal(true);
-          }
-          // Handle other actions here
-        }}
-      />
+    <>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -262,9 +119,6 @@ export default function DashboardPage() {
 
           {/* Insights Grid */}
           <motion.div variants={itemVariants}>
-            <h2 className="text-lg font-bold text-deep-forest mb-4">
-              Smart Insights
-            </h2>
             <div className="grid md:grid-cols-3 gap-4">
               {insights.map((insight, idx) => (
                 <motion.div
@@ -406,23 +260,6 @@ export default function DashboardPage() {
           // Handle quick sale submission
         }}
       />
-
-      {/* Restock Modal */}
-      <RestockModal
-        isOpen={showRestockModal}
-        onClose={() => setShowRestockModal(false)}
-        alert={selectedAlert}
-        onSubmit={(alertId, quantity) => {
-          console.log("Restock:", alertId, quantity);
-          // Handle restock submission
-        }}
-      />
-
-      {/* Action Tips Modal */}
-      <ActionTipsModal
-        isOpen={showActionTips}
-        onClose={() => setShowActionTips(false)}
-      />
-    </div>
+    </>
   );
 }

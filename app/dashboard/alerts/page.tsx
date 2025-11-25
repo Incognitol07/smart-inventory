@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import ViewExpiringItemsModal from "../components/modals/ViewExpiringItemsModal";
-import RestockModal from "../components/modals/RestockModal";
-import AlertResolutionModal from "../components/modals/AlertResolutionModal";
+import ViewExpiringItemsModal from "../../components/modals/ViewExpiringItemsModal";
+import RestockModal from "../../components/modals/RestockModal";
+import AlertResolutionModal from "../../components/modals/AlertResolutionModal";
 
 type AlertItem = {
   id: number;
@@ -19,7 +18,6 @@ type AlertItem = {
 };
 
 export default function AlertsPage() {
-  const router = useRouter();
   const [filter, setFilter] = useState<"all" | "urgent" | "high" | "medium">(
     "all"
   );
@@ -86,54 +84,6 @@ export default function AlertsPage() {
 
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
-      {/* Top Navigation */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-deep-forest/10 px-6 py-4"
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <motion.h1
-              className="text-2xl font-bold text-deep-forest"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              SmartInventory
-            </motion.h1>
-            <p className="text-sm text-deep-forest/60">
-              Monday, November 25, 2025
-            </p>
-          </div>
-          <div className="flex items-center gap-6">
-            {/* Navigation Tabs */}
-            <nav className="flex gap-6">
-              <button
-                onClick={() => router.push("/dashboard")}
-                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => router.push("/inventory")}
-                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
-              >
-                Inventory
-              </button>
-              <button
-                onClick={() => router.push("/sales")}
-                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
-              >
-                Sales
-              </button>
-              <button className="text-deep-forest font-semibold border-b-2 border-granny-green pb-1">
-                Alerts
-              </button>
-            </nav>
-          </div>
-        </div>
-      </motion.div>
-
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <motion.div

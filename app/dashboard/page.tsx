@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, Package, DollarSign, Bell } from "lucide-react";
+import { TrendingUp, Package, DollarSign, Bell, Lightbulb } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import QuickSaleModal from "../components/modals/QuickSaleModal";
 import RestockModal from "../components/modals/RestockModal";
 import NotificationsModal from "../components/modals/NotificationsModal";
+import ActionTipsModal from "../components/modals/ActionTipsModal";
 
 type TodoItem = {
   id: number;
@@ -134,6 +135,7 @@ export default function DashboardPage() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickSale, setShowQuickSale] = useState(false);
   const [showRestockModal, setShowRestockModal] = useState(false);
+  const [showActionTips, setShowActionTips] = useState(true); // Show on first visit
   const [selectedAlert, setSelectedAlert] = useState<TodoItem | null>(null);
   const storeName = "Hemline";
   const greeting = useMemo(() => getTimeBasedGreeting(), []);
@@ -185,6 +187,15 @@ export default function DashboardPage() {
                 Alerts
               </button>
             </nav>
+            {/* Action Tips Button */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowActionTips(true)}
+              className="p-2 hover:bg-deep-forest/5 rounded-full transition"
+            >
+              <Lightbulb size={20} className="text-deep-forest" />
+            </motion.button>
             {/* Notification Bell Icon */}
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -405,6 +416,12 @@ export default function DashboardPage() {
           console.log("Restock:", alertId, quantity);
           // Handle restock submission
         }}
+      />
+
+      {/* Action Tips Modal */}
+      <ActionTipsModal
+        isOpen={showActionTips}
+        onClose={() => setShowActionTips(false)}
       />
     </div>
   );

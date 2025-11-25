@@ -9,8 +9,6 @@ import {
   Bell,
   Menu,
   X,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -236,26 +234,6 @@ export default function Sidebar({
             })}
           </ul>
         </nav>
-
-        {/* Toggle Button */}
-        <div className="p-4 border-t border-deep-forest/10 hidden md:block">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsCollapsed(!isCollapsed);
-            }}
-            className="w-full flex items-center justify-center p-2 bg-cream text-deep-forest rounded-lg hover:bg-cream/80 transition-colors"
-            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-          >
-            {isCollapsed ? (
-              <ChevronRight size={20} />
-            ) : (
-              <ChevronLeft size={20} />
-            )}
-          </motion.button>
-        </div>
       </div>
     );
   }
@@ -303,7 +281,7 @@ export default function Sidebar({
 
       {/* Desktop Sidebar */}
       <div
-        className={`hidden md:flex md:flex-col md:h-screen bg-cream border-r border-deep-forest/10 shadow-sm transition-all duration-300 ${
+        className={`hidden md:sticky md:top-0 md:flex md:flex-col md:h-screen bg-cream border-r border-deep-forest/10 shadow-sm transition-all duration-300 ${
           isCollapsed ? "w-16" : "w-64"
         }`}
       >

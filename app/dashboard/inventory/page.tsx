@@ -93,16 +93,16 @@ export default function InventoryPage() {
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-deep-forest mb-2">
+              <h1 className="text-3xl sm:text-4xl font-bold text-deep-forest mb-2">
                 Inventory
               </h1>
               <p className="text-deep-forest/60">
@@ -139,7 +139,7 @@ export default function InventoryPage() {
 
           {/* Inventory Table */}
           <motion.div
-            className="bg-white rounded-xl border border-deep-forest/10 overflow-hidden"
+            className="bg-white rounded-xl border border-deep-forest/10 overflow-hidden hidden md:block"
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.3 }}
           >
@@ -214,7 +214,7 @@ export default function InventoryPage() {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={(e) => {
-                              e.preventDefault()
+                              e.preventDefault();
                               setSelectedProduct(item);
                               setShowEditModal(true);
                             }}
@@ -242,8 +242,84 @@ export default function InventoryPage() {
             </div>
           </motion.div>
 
+          {/* Mobile Inventory Cards */}
+          <div className="md:hidden space-y-4">
+            {filteredInventory.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="bg-white p-4 rounded-xl border border-deep-forest/10"
+                onClick={() => {
+                  setSelectedProduct(item);
+                  setShowViewModal(true);
+                }}
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="text-lg font-semibold text-deep-forest">
+                    {item.name}
+                  </h3>
+                  <span
+                    className={`font-semibold ${getStatusColor(item.status)}`}
+                  >
+                    {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-deep-forest/60">Stock</p>
+                    <p className="font-medium text-deep-forest">{item.stock}</p>
+                  </div>
+                  <div>
+                    <p className="text-deep-forest/60">Cost</p>
+                    <p className="font-medium text-deep-forest">₦{item.cost}</p>
+                  </div>
+                  <div>
+                    <p className="text-deep-forest/60">Price</p>
+                    <p className="font-medium text-deep-forest">
+                      ₦{item.price}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-deep-forest/60">Profit</p>
+                    <p className="font-medium text-deep-forest">
+                      ₦{item.price - item.cost}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedProduct(item);
+                      setShowEditModal(true);
+                    }}
+                    className="flex-1 bg-deep-forest/10 text-deep-forest py-2 px-4 rounded-lg font-medium hover:bg-deep-forest/20"
+                  >
+                    Edit
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedProduct(item);
+                      setShowDeleteModal(true);
+                    }}
+                    className="flex-1 bg-alert-red/10 text-alert-red py-2 px-4 rounded-lg font-medium hover:bg-alert-red/20"
+                  >
+                    Delete
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
           {/* Summary Stats */}
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {
                 label: "Total Products",

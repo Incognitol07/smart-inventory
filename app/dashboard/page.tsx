@@ -91,7 +91,7 @@ const getTimeBasedGreeting = () => {
     morning: ["Good morning", "Rise and shine", "Let's get to work"],
     afternoon: ["Good afternoon", "Hope you're having a great day"],
     evening: ["Good evening", "Working late?"],
-    night: ["Working late?"],
+    night: ["Working late?", "It's late night"],
   }
 
   let timeOfDay = "morning"

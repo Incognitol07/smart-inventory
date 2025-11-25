@@ -89,9 +89,9 @@ const getTimeBasedGreeting = () => {
   const hour = new Date().getHours()
   const greetings = {
     morning: ["Good morning", "Rise and shine", "Let's get to work"],
-    afternoon: ["Good afternoon", "Hope you're having a great day", "Afternoon check-in"],
-    evening: ["Good evening", "Working late?", "Still here?"],
-    night: ["Working late?", "Burning the midnight oil", "Night shift mode"],
+    afternoon: ["Good afternoon", "Hope you're having a great day"],
+    evening: ["Good evening", "Working late?"],
+    night: ["Working late?"],
   }
 
   let timeOfDay = "morning"

@@ -128,12 +128,14 @@ export default function DashboardPage() {
                   className={`p-6 rounded-xl border border-deep-forest/10 ${insight.color}`}
                 >
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2 bg-white/50 rounded-lg">
-                      <insight.icon size={20} className="text-granny-green" />
+                    <div className="flex flex-row items-center">
+                      <div className="p-2 bg-white/50 rounded-lg">
+                        <insight.icon size={20} className="text-granny-green" />
+                      </div>
+                      <span className="text-xs font-semibold text-deep-forest/60 uppercase tracking-wide">
+                        {insight.title}
+                      </span>
                     </div>
-                    <span className="text-xs font-semibold text-deep-forest/60 uppercase tracking-wide">
-                      {insight.title}
-                    </span>
                   </div>
                   <p className="text-2xl font-bold text-deep-forest mb-1">
                     {insight.value}

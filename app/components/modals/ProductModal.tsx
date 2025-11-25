@@ -336,7 +336,7 @@ export default function ProductModal({
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     type="submit"
-                    className="flex-1 bg-granny-green text-deep-forest py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
+                    className="flex-1 bg-granny-green text-deep-forest py-4 rounded-lg font-semibold flex items-center justify-center gap-1"
                   >
                     <Icon size={20} />
                     {buttonText}

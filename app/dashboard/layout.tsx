@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
-import NotificationsModal from "../components/modals/NotificationsModal";
 import RestockModal from "../components/modals/RestockModal";
 
 type TodoItem = {
@@ -46,7 +46,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [showNotifications, setShowNotifications] = useState(false);
+  const router = useRouter();
   const [showRestockModal, setShowRestockModal] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<TodoItem | null>(null);
 
@@ -54,39 +54,35 @@ export default function DashboardLayout({
     <div className="flex min-h-screen bg-cream">
       {/* Sidebar */}
       <Sidebar
-        onNotificationsClick={() => setShowNotifications(!showNotifications)}
         notificationsCount={todoItems.length}
+        actionItems={todoItems.map((item) => ({
+          id: item.id,
+          title: item.title,
+          message: item.description,
+          priority: item.priority,
+          action: item.action,
+        }))}
+        onAction={(item) => {
+          setSelectedAlert({
+            id: item.id,
+            title: item.title,
+            description: item.message,
+            priority: item.priority,
+            action: item.action,
+          });
+          if (item.action === "Restock now") {
+            setShowRestockModal(true);
+          }
+          // Handle other actions here
+        }}
+        onViewAll={() => {
+          router.push("/dashboard/notifications");
+        }}
       />
 
       {/* Main Content */}
       <div className="flex-1 md:ml-0">
         {children}
-
-        {/* Notification Modal/Panel */}
-        <NotificationsModal
-          isOpen={showNotifications}
-          onClose={() => setShowNotifications(false)}
-          actionItems={todoItems.map((item) => ({
-            id: item.id,
-            title: item.title,
-            message: item.description,
-            priority: item.priority,
-            action: item.action,
-          }))}
-          onAction={(item) => {
-            setSelectedAlert({
-              id: item.id,
-              title: item.title,
-              description: item.message,
-              priority: item.priority,
-              action: item.action,
-            });
-            if (item.action === "Restock now") {
-              setShowRestockModal(true);
-            }
-            // Handle other actions here
-          }}
-        />
 
         {/* Restock Modal */}
         <RestockModal

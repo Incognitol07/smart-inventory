@@ -11,6 +11,15 @@ import {
   X,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
+import NotificationsModal from "./modals/NotificationsModal";
+
+interface ActionItem {
+  id: number;
+  title: string;
+  message: string;
+  priority: string;
+  action: string;
+}
 
 const navigationItems = [
   {
@@ -28,23 +37,23 @@ const navigationItems = [
     href: "/dashboard/sales",
     icon: TrendingUp,
   },
-  {
-    name: "Notifications",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
 ];
 
 interface SidebarProps {
-  onNotificationsClick?: () => void;
   notificationsCount?: number;
+  actionItems?: ActionItem[];
+  onAction?: (item: ActionItem) => void;
+  onViewAll?: () => void;
 }
 
 export default function Sidebar({
-  onNotificationsClick,
   notificationsCount = 0,
+  actionItems = [],
+  onAction = () => {},
+  onViewAll = () => {},
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -121,7 +130,7 @@ export default function Sidebar({
         initial="closed"
         animate={isOpen ? "open" : "closed"}
         variants={sidebarVariants}
-        className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-deep-forest/10 shadow-lg z-50 md:sticky md:top-0 md:h-screen md:shadow-none"
+        className="fixed left-0 top-0 h-screen w-64 bg-cream border-r border-deep-forest/10 shadow-lg z-50 md:sticky md:top-0 md:h-screen md:shadow-none"
       >
         <div className="flex flex-col h-full">
           {/* Header */}
@@ -135,26 +144,24 @@ export default function Sidebar({
                 SmartInventory
               </motion.h1>
               <div className="flex items-center gap-2">
-                {onNotificationsClick && (
-                  <motion.button
+                <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={onNotificationsClick}
+                    onClick={() => setShowNotifications(!showNotifications)}
                     className="relative p-2 bg-cream text-deep-forest rounded-lg hover:bg-cream/80 transition-colors"
                     title="Notifications"
-                  >
+                    >
                     <Bell size={20} />
                     {notificationsCount > 0 && (
-                      <motion.div
+                        <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"
-                      >
+                        >
                         {notificationsCount}
-                      </motion.div>
+                        </motion.div>
                     )}
-                  </motion.button>
-                )}
+                </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -165,11 +172,16 @@ export default function Sidebar({
                 </motion.button>
               </div>
             </div>
-            <p className="text-xs text-deep-forest/60 mt-1">
-              Monday, November 25, 2025
-            </p>
           </div>
 
+            <NotificationsModal
+            isOpen={showNotifications}
+            onClose={() => setShowNotifications(false)}
+            actionItems={actionItems}
+            onAction={onAction}
+            onViewAll={() => {onViewAll(); setShowNotifications(false)}}
+            isDropdown={true}
+            />
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6">
             <ul className="space-y-2">

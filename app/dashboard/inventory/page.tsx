@@ -213,7 +213,8 @@ export default function InventoryPage() {
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault()
                               setSelectedProduct(item);
                               setShowEditModal(true);
                             }}

@@ -16,6 +16,8 @@ interface NotificationsModalProps {
   onClose: () => void;
   actionItems: ActionItem[];
   onAction: (item: ActionItem) => void;
+  onViewAll?: () => void;
+  isDropdown?: boolean;
 }
 
 export default function NotificationsModal({
@@ -23,6 +25,8 @@ export default function NotificationsModal({
   onClose,
   actionItems,
   onAction,
+  onViewAll,
+  isDropdown = false,
 }: NotificationsModalProps) {
   return (
     <AnimatePresence>
@@ -39,7 +43,9 @@ export default function NotificationsModal({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="fixed top-16 right-6 z-60 w-96 max-h-[600px] bg-white rounded-xl border border-deep-forest/10 shadow-lg overflow-hidden"
+            className={`${
+              isDropdown ? "absolute top-0 left-0" : "fixed top-16 right-6"
+            } z-60 w-96 max-h-[600px] bg-white rounded-xl border border-deep-forest/10 shadow-lg overflow-hidden`}
           >
             <div className="flex items-center justify-between p-4 border-b border-deep-forest/10 bg-granny-green/5">
               <div className="flex items-center gap-2">
@@ -105,6 +111,18 @@ export default function NotificationsModal({
                     </div>
                   </motion.div>
                 ))
+              )}
+              {onViewAll && (
+                <div className="mt-4 pt-4 border-t border-deep-forest/10">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={onViewAll}
+                    className="w-full text-left p-3 rounded-lg hover:bg-deep-forest/5 transition-colors text-deep-forest font-semibold"
+                  >
+                    View All Notifications →
+                  </motion.button>
+                </div>
               )}
             </div>
           </motion.div>

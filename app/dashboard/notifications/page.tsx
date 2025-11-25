@@ -7,7 +7,7 @@ import ViewExpiringItemsModal from "../../components/modals/ViewExpiringItemsMod
 import RestockModal from "../../components/modals/RestockModal";
 import AlertResolutionModal from "../../components/modals/AlertResolutionModal";
 
-type AlertItem = {
+type NotificationItem = {
   id: number;
   priority: string;
   title: string;
@@ -17,17 +17,17 @@ type AlertItem = {
   createdAt: string;
 };
 
-export default function AlertsPage() {
+export default function NotificationsPage() {
   const [filter, setFilter] = useState<"all" | "urgent" | "high" | "medium">(
     "all"
   );
   const [showViewExpiringModal, setShowViewExpiringModal] = useState(false);
   const [showRestockModal, setShowRestockModal] = useState(false);
   const [showResolveModal, setShowResolveModal] = useState(false);
-  const [selectedAlert, setSelectedAlert] = useState<AlertItem | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<NotificationItem | null>(null);
 
-  // Mock alerts data
-  const [alerts, setAlerts] = useState<AlertItem[]>([
+  // Mock notifications data
+  const [notifications, setNotifications] = useState<NotificationItem[]>([
     {
       id: 1,
       priority: "urgent",
@@ -69,14 +69,14 @@ export default function AlertsPage() {
     },
   ]);
 
-  const filteredAlerts = alerts.filter((alert) => {
+  const filteredAlerts = notifications.filter((alert) => {
     if (filter === "all") return true;
     return alert.priority === filter && alert.status === "active";
   });
 
   const handleResolveAlert = (id: number) => {
-    setAlerts(
-      alerts.map((alert) =>
+    setNotifications(
+      notifications.map((alert) =>
         alert.id === id ? { ...alert, status: "resolved" as const } : alert
       )
     );
@@ -95,16 +95,16 @@ export default function AlertsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold text-deep-forest mb-2">
-                Alerts
+                Notifications
               </h1>
               <p className="text-deep-forest/60">
-                Manage your inventory alerts and notifications
+                Manage your notifications
               </p>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-deep-forest/60">
-                {alerts.filter((a) => a.status === "active").length} active
-                alerts
+                {notifications.filter((a) => a.status === "active").length} active
+                notifications
               </span>
             </div>
           </div>
@@ -112,25 +112,25 @@ export default function AlertsPage() {
           {/* Filter Tabs */}
           <div className="flex gap-4">
             {[
-              { key: "all", label: "All Alerts", count: alerts.length },
+              { key: "all", label: "All Alerts", count: notifications.length },
               {
                 key: "urgent",
                 label: "Urgent",
-                count: alerts.filter(
+                count: notifications.filter(
                   (a) => a.priority === "urgent" && a.status === "active"
                 ).length,
               },
               {
                 key: "high",
                 label: "High Priority",
-                count: alerts.filter(
+                count: notifications.filter(
                   (a) => a.priority === "high" && a.status === "active"
                 ).length,
               },
               {
                 key: "medium",
                 label: "Medium",
-                count: alerts.filter(
+                count: notifications.filter(
                   (a) => a.priority === "medium" && a.status === "active"
                 ).length,
               },
@@ -267,7 +267,7 @@ export default function AlertsPage() {
                 All caught up!
               </h3>
               <p className="text-deep-forest/60">
-                No alerts match your current filter.
+                No notifications match your current filter.
               </p>
             </motion.div>
           )}
@@ -277,14 +277,14 @@ export default function AlertsPage() {
             {[
               {
                 label: "Active Alerts",
-                value: alerts
+                value: notifications
                   .filter((a) => a.status === "active")
                   .length.toString(),
                 color: "text-deep-forest",
               },
               {
                 label: "Urgent",
-                value: alerts
+                value: notifications
                   .filter(
                     (a) => a.priority === "urgent" && a.status === "active"
                   )

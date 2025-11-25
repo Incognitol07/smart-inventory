@@ -112,7 +112,7 @@ export default function Sidebar({
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 left-4 z-50 md:hidden bg-deep-forest text-cream p-2 rounded-lg shadow-lg"
+        className="fixed top-4 right-4 z-50 md:hidden bg-deep-forest text-cream p-2 rounded-lg shadow-lg"
       >
         <Menu size={20} />
       </motion.button>

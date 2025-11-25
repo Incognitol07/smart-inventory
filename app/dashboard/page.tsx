@@ -99,9 +99,8 @@ export default function DashboardPage() {
 
   return (
     <>
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -109,7 +108,7 @@ export default function DashboardPage() {
           className="space-y-8"
         >
           <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="text-4xl font-bold text-deep-forest mb-1">
+            <h1 className="text-3xl sm:text-4xl font-bold text-deep-forest mb-1">
               {greeting}, {storeName}! 👋
             </h1>
             <p className="text-deep-forest/60">
@@ -119,7 +118,7 @@ export default function DashboardPage() {
 
           {/* Insights Grid */}
           <motion.div variants={itemVariants}>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {insights.map((insight, idx) => (
                 <motion.div
                   key={idx}
@@ -128,8 +127,8 @@ export default function DashboardPage() {
                   className={`p-6 rounded-xl border border-deep-forest/10 ${insight.color}`}
                 >
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="flex flex-row items-center">
-                      <div className="p-2 bg-white/50 rounded-lg">
+                    <div className="flex flex-row items-center gap-1">
+                      <div className="p-2 rounded-lg">
                         <insight.icon size={20} className="text-granny-green" />
                       </div>
                       <span className="text-xs font-semibold text-deep-forest/60 uppercase tracking-wide">
@@ -215,7 +214,7 @@ export default function DashboardPage() {
           {/* Summary Stats */}
           <motion.div
             variants={itemVariants}
-            className="grid md:grid-cols-4 gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
           >
             {[
               { label: "Today's Revenue", value: "₦2,500", change: "+12%" },

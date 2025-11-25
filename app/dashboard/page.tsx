@@ -1,9 +1,36 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { AlertCircle, TrendingUp, Package, DollarSign, AlertTriangle, Bell, X } from "lucide-react"
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  AlertCircle,
+  TrendingUp,
+  Package,
+  DollarSign,
+  AlertTriangle,
+  Bell,
+  X,
+} from "lucide-react";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { useRouter } from "next/navigation";
+
+type TodoItem = {
+  id: number;
+  priority: string;
+  title: string;
+  description: string;
+  action: string;
+};
 
 // Mock data
 const salesData = [
@@ -14,7 +41,7 @@ const salesData = [
   { day: "Fri", sales: 2181, profit: 1300 },
   { day: "Sat", sales: 2500, profit: 1400 },
   { day: "Sun", sales: 2100, profit: 1200 },
-]
+];
 
 const todoItems = [
   {
@@ -29,17 +56,19 @@ const todoItems = [
     id: 2,
     priority: "high",
     title: "Expiring items alert",
-    description: "₦12,600 worth of goods expire in 2 weeks. Move them to the front or mark down 20%.",
+    description:
+      "₦12,600 worth of goods expire in 2 weeks. Move them to the front or mark down 20%.",
     action: "View list",
   },
   {
     id: 3,
     priority: "medium",
     title: "Slow-moving stock",
-    description: "You bought 10 cartons of Peak Milk last month but only sold 4. That's ₦12,000 tied up.",
+    description:
+      "You bought 10 cartons of Peak Milk last month but only sold 4. That's ₦12,000 tied up.",
     action: "Review",
   },
-]
+];
 
 const insights = [
   {
@@ -63,7 +92,7 @@ const insights = [
     description: "You ran out of Coke twice—likely lost this in sales.",
     color: "bg-red-50",
   },
-]
+];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -74,7 +103,7 @@ const containerVariants = {
       delayChildren: 0.2,
     },
   },
-}
+};
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -83,31 +112,37 @@ const itemVariants = {
     y: 0,
     transition: { duration: 0.4 },
   },
-}
+};
 
 const getTimeBasedGreeting = () => {
-  const hour = new Date().getHours()
+  const hour = new Date().getHours();
   const greetings = {
     morning: ["Good morning", "Rise and shine", "Let's get to work"],
     afternoon: ["Good afternoon", "Hope you're having a great day"],
     evening: ["Good evening", "Working late?"],
     night: ["Working late?", "It's late night"],
-  }
+  };
 
-  let timeOfDay = "morning"
-  if (hour >= 12 && hour < 17) timeOfDay = "afternoon"
-  else if (hour >= 17 && hour < 21) timeOfDay = "evening"
-  else if (hour >= 21 || hour < 5) timeOfDay = "night"
+  let timeOfDay = "morning";
+  if (hour >= 12 && hour < 17) timeOfDay = "afternoon";
+  else if (hour >= 17 && hour < 21) timeOfDay = "evening";
+  else if (hour >= 21 || hour < 5) timeOfDay = "night";
 
   return greetings[timeOfDay as keyof typeof greetings][
-    Math.floor(Math.random() * greetings[timeOfDay as keyof typeof greetings].length)
-  ]
-}
+    Math.floor(
+      Math.random() * greetings[timeOfDay as keyof typeof greetings].length
+    )
+  ];
+};
 
 export default function DashboardPage() {
-  const [showNotifications, setShowNotifications] = useState(false)
-  const storeName = "Segun's Store"
-  const greeting = useMemo(() => getTimeBasedGreeting(), [])
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showQuickSale, setShowQuickSale] = useState(false);
+  const [showRestockModal, setShowRestockModal] = useState(false);
+  const [selectedAlert, setSelectedAlert] = useState<TodoItem | null>(null);
+  const storeName = "Hemline";
+  const greeting = useMemo(() => getTimeBasedGreeting(), []);
+  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
@@ -126,9 +161,35 @@ export default function DashboardPage() {
             >
               SmartInventory
             </motion.h1>
-            <p className="text-sm text-deep-forest/60">Monday, November 25, 2025</p>
+            <p className="text-sm text-deep-forest/60">
+              Monday, November 25, 2025
+            </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-6">
+            {/* Navigation Tabs */}
+            <nav className="flex gap-6">
+              <button className="text-deep-forest font-semibold border-b-2 border-granny-green pb-1">
+                Dashboard
+              </button>
+              <button
+                onClick={() => router.push("/inventory")}
+                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
+              >
+                Inventory
+              </button>
+              <button
+                onClick={() => router.push("/sales")}
+                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
+              >
+                Sales
+              </button>
+              <button
+                onClick={() => router.push("/alerts")}
+                className="text-deep-forest/60 hover:text-deep-forest transition-colors"
+              >
+                Alerts
+              </button>
+            </nav>
             {/* Notification Bell Icon */}
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -195,23 +256,39 @@ export default function DashboardPage() {
                       item.priority === "urgent"
                         ? "bg-red-50/40 hover:bg-red-50/60"
                         : item.priority === "high"
-                          ? "bg-granny-green/5 hover:bg-granny-green/10"
-                          : "bg-blue-50/40 hover:bg-blue-50/60"
+                        ? "bg-granny-green/5 hover:bg-granny-green/10"
+                        : "bg-blue-50/40 hover:bg-blue-50/60"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-deep-forest text-sm mb-1">{item.title}</h4>
-                        <p className="text-xs text-deep-forest/70 mb-2 line-clamp-2">{item.description}</p>
+                        <h4 className="font-semibold text-deep-forest text-sm mb-1">
+                          {item.title}
+                        </h4>
+                        <p className="text-xs text-deep-forest/70 mb-2 line-clamp-2">
+                          {item.description}
+                        </p>
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            setSelectedAlert(item);
+                            if (item.action === "Restock now") {
+                              setShowRestockModal(true);
+                            }
+                            // Handle other actions here
+                          }}
                           className="text-xs font-semibold text-granny-green hover:text-deep-forest transition"
                         >
                           {item.action} →
                         </motion.button>
                       </div>
-                      {item.priority === "urgent" && <AlertTriangle size={16} className="text-red-500 shrink-0" />}
+                      {item.priority === "urgent" && (
+                        <AlertTriangle
+                          size={16}
+                          className="text-red-500 shrink-0"
+                        />
+                      )}
                     </div>
                   </motion.div>
                 ))}
@@ -223,17 +300,26 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8"
+        >
           <motion.div variants={itemVariants} className="mb-8">
             <h1 className="text-4xl font-bold text-deep-forest mb-1">
               {greeting}, {storeName}! 👋
             </h1>
-            <p className="text-deep-forest/60">Here&apos;s what&apos;s happening with your inventory today</p>
+            <p className="text-deep-forest/60">
+              Here&apos;s what&apos;s happening with your inventory today
+            </p>
           </motion.div>
 
           {/* Insights Grid */}
           <motion.div variants={itemVariants}>
-            <h2 className="text-lg font-bold text-deep-forest mb-4">Smart Insights</h2>
+            <h2 className="text-lg font-bold text-deep-forest mb-4">
+              Smart Insights
+            </h2>
             <div className="grid md:grid-cols-3 gap-4">
               {insights.map((insight, idx) => (
                 <motion.div
@@ -250,22 +336,31 @@ export default function DashboardPage() {
                       {insight.title}
                     </span>
                   </div>
-                  <p className="text-2xl font-bold text-deep-forest mb-1">{insight.value}</p>
-                  <p className="text-sm text-deep-forest/70">{insight.description}</p>
+                  <p className="text-2xl font-bold text-deep-forest mb-1">
+                    {insight.value}
+                  </p>
+                  <p className="text-sm text-deep-forest/70">
+                    {insight.description}
+                  </p>
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
           {/* Charts Section */}
-          <motion.div variants={itemVariants} className="grid lg:grid-cols-2 gap-6">
+          <motion.div
+            variants={itemVariants}
+            className="grid lg:grid-cols-2 gap-6"
+          >
             {/* Sales Chart */}
             <motion.div
               className="bg-white p-6 rounded-xl border border-deep-forest/10"
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className="text-lg font-bold text-deep-forest mb-4">Weekly Sales</h3>
+              <h3 className="text-lg font-bold text-deep-forest mb-4">
+                Weekly Sales
+              </h3>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2d5f3f10" />
@@ -295,7 +390,9 @@ export default function DashboardPage() {
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className="text-lg font-bold text-deep-forest mb-4">Weekly Profit</h3>
+              <h3 className="text-lg font-bold text-deep-forest mb-4">
+                Weekly Profit
+              </h3>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2d5f3f10" />
@@ -315,7 +412,10 @@ export default function DashboardPage() {
           </motion.div>
 
           {/* Summary Stats */}
-          <motion.div variants={itemVariants} className="grid md:grid-cols-4 gap-4">
+          <motion.div
+            variants={itemVariants}
+            className="grid md:grid-cols-4 gap-4"
+          >
             {[
               { label: "Today's Revenue", value: "₦2,500", change: "+12%" },
               { label: "Items in Stock", value: "247", change: "+3" },
@@ -327,14 +427,166 @@ export default function DashboardPage() {
                 whileHover={{ scale: 1.02 }}
                 className="bg-white p-4 rounded-lg border border-deep-forest/10"
               >
-                <p className="text-xs font-semibold text-deep-forest/60 uppercase tracking-wide mb-2">{stat.label}</p>
-                <p className="text-2xl font-bold text-deep-forest mb-1">{stat.value}</p>
-                <p className="text-xs text-granny-green font-semibold">{stat.change}</p>
+                <p className="text-xs font-semibold text-deep-forest/60 uppercase tracking-wide mb-2">
+                  {stat.label}
+                </p>
+                <p className="text-2xl font-bold text-deep-forest mb-1">
+                  {stat.value}
+                </p>
+                <p className="text-xs text-granny-green font-semibold">
+                  {stat.change}
+                </p>
               </motion.div>
             ))}
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Floating Action Button for Quick Sale */}
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setShowQuickSale(true)}
+        className="fixed bottom-6 right-6 bg-granny-green text-deep-forest p-4 rounded-full shadow-lg hover:shadow-xl transition-shadow z-50"
+      >
+        <DollarSign size={24} />
+      </motion.button>
+
+      {/* Quick Sale Modal */}
+      <AnimatePresence>
+        {showQuickSale && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowQuickSale(false)}
+              className="fixed inset-0 bg-deep-forest/20 z-50"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-xl border border-deep-forest/10 shadow-lg z-50 w-96"
+            >
+              <h3 className="text-xl font-bold text-deep-forest mb-4">
+                Quick Sale
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-deep-forest mb-2">
+                    Product
+                  </label>
+                  <select className="w-full p-2 border border-deep-forest/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green">
+                    <option>Select product...</option>
+                    <option>Indomie</option>
+                    <option>Cooking Oil</option>
+                    <option>Coke</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-deep-forest mb-2">
+                    Quantity
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    className="w-full p-2 border border-deep-forest/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green"
+                    placeholder="Enter quantity"
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowQuickSale(false)}
+                    className="flex-1 bg-gray-100 text-deep-forest py-2 px-4 rounded-lg font-semibold"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex-1 bg-granny-green text-deep-forest py-2 px-4 rounded-lg font-semibold"
+                  >
+                    Record Sale
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Restock Modal */}
+      <AnimatePresence>
+        {showRestockModal && selectedAlert && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowRestockModal(false)}
+              className="fixed inset-0 bg-deep-forest/20 z-50"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-xl border border-deep-forest/10 shadow-lg z-50 w-96"
+            >
+              <h3 className="text-xl font-bold text-deep-forest mb-4">
+                Restock {selectedAlert.title.toLowerCase()}
+              </h3>
+              <div className="space-y-4">
+                <div className="bg-cream p-4 rounded-lg">
+                  <p className="text-deep-forest/70 text-sm">
+                    {selectedAlert.description}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-deep-forest mb-2">
+                    Order Quantity
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    defaultValue="12"
+                    className="w-full p-2 border border-deep-forest/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-deep-forest mb-2">
+                    Supplier
+                  </label>
+                  <select className="w-full p-2 border border-deep-forest/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green">
+                    <option>ABC Distributors</option>
+                    <option>XYZ Wholesale</option>
+                    <option>Local Supplier</option>
+                  </select>
+                </div>
+                <div className="flex gap-3">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowRestockModal(false)}
+                    className="flex-1 bg-gray-100 text-deep-forest py-2 px-4 rounded-lg font-semibold"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex-1 bg-granny-green text-deep-forest py-2 px-4 rounded-lg font-semibold"
+                  >
+                    Place Order
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
-  )
+  );
 }

@@ -23,6 +23,7 @@ export default function InventoryPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Mock inventory data
@@ -227,6 +228,10 @@ export default function InventoryPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.05 }}
                       className="border-t border-deep-forest/5 hover:bg-deep-forest/5"
+                      onClick={() => {
+                        setSelectedProduct(item)
+                        setShowViewModal(true)
+                      }}
                     >
                       <td className="py-4 px-6 text-deep-forest font-medium">
                         {item.name}
@@ -352,6 +357,12 @@ export default function InventoryPage() {
           console.log("Update product:", id, updatedProduct);
           // Handle updating product
         }}
+      />
+      <ProductModal
+        isOpen={showViewModal}
+        mode="view"
+        product={selectedProduct}
+        onClose={() => {setShowViewModal(false)}}
       />
 
       <DeleteProductModal

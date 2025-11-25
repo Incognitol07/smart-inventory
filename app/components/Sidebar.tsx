@@ -9,7 +9,6 @@ import {
   Bell,
   Menu,
   X,
-  Lightbulb,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -30,20 +29,18 @@ const navigationItems = [
     icon: TrendingUp,
   },
   {
-    name: "Alerts",
-    href: "/dashboard/alerts",
+    name: "Notifications",
+    href: "/dashboard/notifications",
     icon: Bell,
   },
 ];
 
 interface SidebarProps {
-  onActionTipsClick?: () => void;
   onNotificationsClick?: () => void;
   notificationsCount?: number;
 }
 
 export default function Sidebar({
-  onActionTipsClick,
   onNotificationsClick,
   notificationsCount = 0,
 }: SidebarProps) {
@@ -181,40 +178,27 @@ export default function Sidebar({
           </nav>
 
           {/* Action Buttons */}
-          {(onActionTipsClick || onNotificationsClick) && (
+          {onNotificationsClick && (
             <div className="p-4 border-t border-deep-forest/10">
               <div className="flex gap-2">
-                {onActionTipsClick && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={onActionTipsClick}
-                    className="flex-1 p-3 bg-cream text-deep-forest rounded-lg hover:bg-cream/80 transition-colors"
-                    title="Action Tips"
-                  >
-                    <Lightbulb size={20} className="mx-auto" />
-                  </motion.button>
-                )}
-                {onNotificationsClick && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={onNotificationsClick}
-                    className="relative flex-1 p-3 bg-cream text-deep-forest rounded-lg hover:bg-cream/80 transition-colors"
-                    title="Notifications"
-                  >
-                    <Bell size={20} className="mx-auto" />
-                    {notificationsCount > 0 && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"
-                      >
-                        {notificationsCount}
-                      </motion.div>
-                    )}
-                  </motion.button>
-                )}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={onNotificationsClick}
+                  className="relative flex-1 p-3 bg-cream text-deep-forest rounded-lg hover:bg-cream/80 transition-colors"
+                  title="Notifications"
+                >
+                  <Bell size={20} className="mx-auto" />
+                  {notificationsCount > 0 && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"
+                    >
+                      {notificationsCount}
+                    </motion.div>
+                  )}
+                </motion.button>
               </div>
             </div>
           )}

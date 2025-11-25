@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import NotificationsModal from "../components/modals/NotificationsModal";
-import ActionTipsModal from "../components/modals/ActionTipsModal";
 import RestockModal from "../components/modals/RestockModal";
 
 type TodoItem = {
@@ -48,20 +47,17 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showActionTips, setShowActionTips] = useState(true); // Show on first visit
   const [showRestockModal, setShowRestockModal] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<TodoItem | null>(null);
 
   return (
-       <div className="flex min-h-screen bg-cream">
+    <div className="flex min-h-screen bg-cream">
       {/* Sidebar */}
       <Sidebar
-        onActionTipsClick={() => setShowActionTips(true)}
         onNotificationsClick={() => setShowNotifications(!showNotifications)}
         notificationsCount={todoItems.length}
       />
-      
-      
+
       {/* Main Content */}
       <div className="flex-1 md:ml-0">
         {children}
@@ -92,12 +88,6 @@ export default function DashboardLayout({
           }}
         />
 
-        {/* Action Tips Modal */}
-        <ActionTipsModal
-          isOpen={showActionTips}
-          onClose={() => setShowActionTips(false)}
-        />
-
         {/* Restock Modal */}
         <RestockModal
           isOpen={showRestockModal}
@@ -109,7 +99,6 @@ export default function DashboardLayout({
           }}
         />
       </div>
-
     </div>
   );
 }

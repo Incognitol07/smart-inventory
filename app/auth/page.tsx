@@ -1,84 +1,87 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Eye, EyeOff, ArrowLeft, CheckCircle } from "lucide-react"
-import Link from "next/link"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Eye, EyeOff, ArrowLeft, CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
-  const [activeTab, setActiveTab] = useState<"login" | "signup">("login")
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
     businessName: "",
-  })
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isLoading, setIsLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }))
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = "Please enter your email"
+      newErrors.email = "Please enter your email";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email"
+      newErrors.email = "Please enter a valid email";
     }
 
     if (!formData.password) {
-      newErrors.password = "Please enter your password"
+      newErrors.password = "Please enter your password";
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters"
+      newErrors.password = "Password must be at least 8 characters";
     }
 
     if (activeTab === "signup") {
       if (!formData.confirmPassword) {
-        newErrors.confirmPassword = "Please confirm your password"
+        newErrors.confirmPassword = "Please confirm your password";
       } else if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = "Passwords don't match"
+        newErrors.confirmPassword = "Passwords don't match";
       }
       if (!formData.businessName) {
-        newErrors.businessName = "Please enter your business name"
+        newErrors.businessName = "Please enter your business name";
       }
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validateForm()) return
+    e.preventDefault();
+    if (!validateForm()) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    console.log(`${activeTab} attempt:`, formData)
-    setIsLoading(false)
-    setSuccess(true)
+    console.log(`${activeTab} attempt:`, formData);
+    setIsLoading(false);
+    setSuccess(true);
+    router.push("/dashboard");
 
     // Reset success after 3 seconds
-    setTimeout(() => setSuccess(false), 3000)
-  }
+    setTimeout(() => setSuccess(false), 3000);
+  };
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
-  }
+  };
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
@@ -89,7 +92,10 @@ export default function AuthPage() {
         transition={{ duration: 0.5 }}
         className="p-6"
       >
-        <Link href="/" className="inline-flex items-center text-deep-forest hover:text-granny-green transition-colors">
+        <Link
+          href="/"
+          className="inline-flex items-center text-deep-forest hover:text-granny-green transition-colors"
+        >
           <ArrowLeft size={20} className="mr-2" />
           Back to Home
         </Link>
@@ -150,7 +156,10 @@ export default function AuthPage() {
             className="bg-white p-8 rounded-2xl shadow-lg space-y-6"
           >
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-deep-forest mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-deep-forest mb-2"
+              >
                 Your email
               </label>
               <input
@@ -164,7 +173,9 @@ export default function AuthPage() {
                 }`}
                 placeholder="you@yourstore.com"
               />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
             </div>
 
             {activeTab === "signup" && (
@@ -174,7 +185,10 @@ export default function AuthPage() {
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <label htmlFor="businessName" className="block text-sm font-medium text-deep-forest mb-2">
+                <label
+                  htmlFor="businessName"
+                  className="block text-sm font-medium text-deep-forest mb-2"
+                >
                   Business name
                 </label>
                 <input
@@ -184,16 +198,25 @@ export default function AuthPage() {
                   value={formData.businessName}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green transition-colors ${
-                    errors.businessName ? "border-red-500" : "border-deep-forest/20"
+                    errors.businessName
+                      ? "border-red-500"
+                      : "border-deep-forest/20"
                   }`}
                   placeholder="Your Store Name"
                 />
-                {errors.businessName && <p className="text-red-500 text-sm mt-1">{errors.businessName}</p>}
+                {errors.businessName && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.businessName}
+                  </p>
+                )}
               </motion.div>
             )}
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-deep-forest mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-deep-forest mb-2"
+              >
                 Your password
               </label>
               <div className="relative">
@@ -216,7 +239,9 @@ export default function AuthPage() {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
             </div>
 
             {activeTab === "signup" && (
@@ -226,7 +251,10 @@ export default function AuthPage() {
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-deep-forest mb-2">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-deep-forest mb-2"
+                >
                   Confirm password
                 </label>
                 <input
@@ -236,11 +264,17 @@ export default function AuthPage() {
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green transition-colors ${
-                    errors.confirmPassword ? "border-red-500" : "border-deep-forest/20"
+                    errors.confirmPassword
+                      ? "border-red-500"
+                      : "border-deep-forest/20"
                   }`}
                   placeholder="Repeat your password"
                 />
-                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </motion.div>
             )}
 
@@ -254,7 +288,9 @@ export default function AuthPage() {
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-deep-forest border-t-transparent rounded-full animate-spin"></div>
-                  {activeTab === "login" ? "Signing in..." : "Creating account..."}
+                  {activeTab === "login"
+                    ? "Signing in..."
+                    : "Creating account..."}
                 </>
               ) : success ? (
                 <>
@@ -270,7 +306,10 @@ export default function AuthPage() {
 
             {activeTab === "login" && (
               <div className="text-center">
-                <a href="#" className="text-sm text-deep-forest/60 hover:text-deep-forest transition-colors">
+                <a
+                  href="#"
+                  className="text-sm text-deep-forest/60 hover:text-deep-forest transition-colors"
+                >
                   Need help with your password?
                 </a>
               </div>
@@ -289,5 +328,5 @@ export default function AuthPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

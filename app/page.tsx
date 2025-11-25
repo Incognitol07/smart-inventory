@@ -10,8 +10,10 @@ import {
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [stats, setStats] = useState([
     { value: 0, target: 2500, prefix: "", suffix: "+" },
     { value: 0, target: 2100000, prefix: "$", suffix: "" },
@@ -106,6 +108,7 @@ export default function Home() {
               backgroundColor: "rgba(168, 224, 99, 0.8)",
             }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => router.push("/auth")}
             className="bg-granny-green text-deep-forest px-4 md:px-6 py-2 rounded-full font-semibold text-sm md:text-base transition"
           >
             Get Started
@@ -151,6 +154,7 @@ export default function Home() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => router.push("/auth")}
                   className="bg-deep-forest text-cream px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg transition flex items-center justify-center gap-2"
                 >
                   Start Now <ArrowRight size={20} />
@@ -158,6 +162,7 @@ export default function Home() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => router.push("/auth")}
                   className="border-2 border-deep-forest text-deep-forest px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg transition"
                 >
                   Login
@@ -447,6 +452,7 @@ export default function Home() {
                 style={{ opacity: 1 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => router.push("/auth")}
                 className="bg-granny-green text-deep-forest px-10 py-4 rounded-full font-bold text-lg flex items-center justify-center gap-2"
               >
                 Start Now for Free
@@ -456,6 +462,7 @@ export default function Home() {
                 style={{ opacity: 1 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => router.push("/auth")}
                 className="border-2 border-cream text-cream px-10 py-4 rounded-full font-bold text-lg transition"
               >
                 Login

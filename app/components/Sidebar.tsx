@@ -10,6 +10,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import NotificationsModal from "./modals/NotificationsModal";
 
@@ -136,13 +137,15 @@ export default function Sidebar({
           {/* Header */}
           <div className="p-6 border-b border-deep-forest/10">
             <div className="flex items-center justify-between">
-              <motion.h1
-                className="text-xl font-bold text-deep-forest"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400 }}
-              >
-                SmartInventory
-              </motion.h1>
+                <Link href="/">
+                    <motion.h1
+                        className="text-xl font-bold text-deep-forest"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 400 }}
+                    >
+                        SmartInventory
+                    </motion.h1>
+                </Link>
               <div className="flex items-center gap-2">
                 <motion.button
                     whileHover={{ scale: 1.05 }}

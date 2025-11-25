@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { AlertCircle, TrendingUp, Package, DollarSign, Clock, AlertTriangle } from "lucide-react"
+import { useState, useMemo } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { AlertCircle, TrendingUp, Package, DollarSign, AlertTriangle, Bell, X, Clock } from "lucide-react"
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
 // Mock data
@@ -85,8 +85,29 @@ const itemVariants = {
   },
 }
 
+const getTimeBasedGreeting = () => {
+  const hour = new Date().getHours()
+  const greetings = {
+    morning: ["Good morning", "Rise and shine", "Let's get to work"],
+    afternoon: ["Good afternoon", "Hope you're having a great day", "Afternoon check-in"],
+    evening: ["Good evening", "Working late?", "Still here?"],
+    night: ["Working late?", "Burning the midnight oil", "Night shift mode"],
+  }
+
+  let timeOfDay = "morning"
+  if (hour >= 12 && hour < 17) timeOfDay = "afternoon"
+  else if (hour >= 17 && hour < 21) timeOfDay = "evening"
+  else if (hour >= 21 || hour < 5) timeOfDay = "night"
+
+  return greetings[timeOfDay as keyof typeof greetings][
+    Math.floor(Math.random() * greetings[timeOfDay as keyof typeof greetings].length)
+  ]
+}
+
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState("today")
+  const [showNotifications, setShowNotifications] = useState(false)
+  const storeName = "Segun's Store"
+  const greeting = useMemo(() => getTimeBasedGreeting(), [])
 
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
@@ -98,62 +119,124 @@ export default function DashboardPage() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-deep-forest">Your Dashboard</h1>
+            <motion.h1
+              className="text-2xl font-bold text-deep-forest"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              SmartInventory
+            </motion.h1>
             <p className="text-sm text-deep-forest/60">Monday, November 25, 2025</p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 bg-granny-green text-deep-forest px-4 py-2 rounded-full font-semibold text-sm transition"
-          >
-            <Clock size={16} />
-            Last 24 hours
-          </motion.button>
+          <div className="flex items-center gap-3">
+            {/* Notification Bell Icon */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative p-2 hover:bg-deep-forest/5 rounded-full transition"
+            >
+              <Bell size={20} className="text-deep-forest" />
+              {/* Notification badge showing count */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"
+              >
+                {todoItems.length}
+              </motion.div>
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 bg-granny-green text-deep-forest px-4 py-2 rounded-full font-semibold text-sm transition"
+            >
+              <Clock size={16} className="text-deep-forest" />
+              Last 24 hours
+            </motion.button>
+          </div>
         </div>
       </motion.div>
+
+      {/* Notification Modal/Panel */}
+      <AnimatePresence>
+        {showNotifications && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowNotifications(false)}
+              className="fixed inset-0 bg-deep-forest/20 z-40"
+            />
+            {/* Notification Panel */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="fixed top-16 right-6 z-50 w-96 max-h-[600px] bg-white rounded-xl border border-deep-forest/10 shadow-lg overflow-hidden"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-deep-forest/10 bg-granny-green/5">
+                <h3 className="font-bold text-deep-forest flex items-center gap-2">
+                  <AlertCircle size={18} className="text-granny-green" />
+                  Action Items ({todoItems.length})
+                </h3>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowNotifications(false)}
+                  className="p-1 hover:bg-deep-forest/10 rounded transition"
+                >
+                  <X size={18} className="text-deep-forest" />
+                </motion.button>
+              </div>
+              <div className="overflow-y-auto max-h-[550px] space-y-2 p-4">
+                {todoItems.map((item, idx) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    whileHover={{ x: 4 }}
+                    className={`p-3 rounded-lg border-l-4 cursor-pointer transition ${
+                      item.priority === "urgent"
+                        ? "bg-red-50/40 hover:bg-red-50/60"
+                        : item.priority === "high"
+                          ? "bg-granny-green/5 hover:bg-granny-green/10"
+                          : "bg-blue-50/40 hover:bg-blue-50/60"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-deep-forest text-sm mb-1">{item.title}</h4>
+                        <p className="text-xs text-deep-forest/70 mb-2 line-clamp-2">{item.description}</p>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="text-xs font-semibold text-granny-green hover:text-deep-forest transition"
+                        >
+                          {item.action} →
+                        </motion.button>
+                      </div>
+                      {item.priority === "urgent" && <AlertTriangle size={16} className="text-red-500 shrink-0" />}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
-          {/* Priority Actions Section */}
-          <motion.div variants={itemVariants}>
-            <h2 className="text-lg font-bold text-deep-forest mb-4 flex items-center gap-2">
-              <AlertCircle size={20} className="text-granny-green" />
-              Your Action Items Today
-            </h2>
-            <div className="space-y-3">
-              {todoItems.map((item, idx) => (
-                <motion.div
-                  key={item.id}
-                  whileHover={{ x: 8 }}
-                  transition={{ duration: 0.2 }}
-                  className={`p-4 rounded-xl border-l-4 backdrop-blur transition ${
-                    item.priority === "urgent"
-                      ? "border-l-red-500 bg-red-50/40"
-                      : item.priority === "high"
-                        ? "border-l-granny-green bg-granny-green/5"
-                        : "border-l-blue-500 bg-blue-50/40"
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="font-bold text-deep-forest mb-1">{item.title}</h3>
-                      <p className="text-sm text-deep-forest/70 mb-3">{item.description}</p>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="text-sm font-semibold text-granny-green hover:text-deep-forest transition"
-                      >
-                        {item.action} →
-                      </motion.button>
-                    </div>
-                    {item.priority === "urgent" && (
-                      <AlertTriangle size={20} className="text-red-500 flex-shrink-0 ml-3" />
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+          <motion.div variants={itemVariants} className="mb-8">
+            <h1 className="text-4xl font-bold text-deep-forest mb-1">
+              {greeting}, {storeName}! 👋
+            </h1>
+            <p className="text-deep-forest/60">Here&apos;s what&apos;s happening with your inventory today</p>
           </motion.div>
 
           {/* Insights Grid */}

@@ -109,7 +109,7 @@ export default function DashboardPage() {
         >
           <motion.div variants={itemVariants} className="mb-8">
             <h1 className="text-3xl sm:text-4xl font-bold text-deep-forest mb-1">
-              {greeting}, {storeName}! 👋
+              {greeting}, {storeName} 👋
             </h1>
             <p className="text-deep-forest/60">
               Here&apos;s what&apos;s happening with your inventory today

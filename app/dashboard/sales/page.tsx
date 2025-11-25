@@ -15,7 +15,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import ExportReportModal from "../../components/modals/ExportReportModal";
-// import TransactionDetailsModal from "../../components/modals/TransactionDetailsModal";
 
 type WeeklySale = {
   day: string;
@@ -33,9 +32,6 @@ type MonthlySale = {
 export default function SalesPage() {
   const [selectedPeriod, setSelectedPeriod] = useState("week");
   const [showExportModal, setShowExportModal] = useState(false);
-  // const [showTransactionModal, setShowTransactionModal] = useState(false);
-  // const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
-
   // Mock sales data
   const weeklySales = [
     { day: "Mon", sales: 2400, profit: 1200, transactions: 24 },
@@ -317,11 +313,6 @@ export default function SalesPage() {
         }}
       />
 
-      {/* <TransactionDetailsModal
-        isOpen={showTransactionModal}
-        onClose={() => setShowTransactionModal(false)}
-        transaction={selectedTransaction}
-      /> */}
     </div>
   );
 }

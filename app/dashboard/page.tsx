@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { AlertCircle, TrendingUp, Package, DollarSign, AlertTriangle, Bell, X, Clock } from "lucide-react"
+import { AlertCircle, TrendingUp, Package, DollarSign, AlertTriangle, Bell, X } from "lucide-react"
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
 // Mock data
@@ -145,14 +145,6 @@ export default function DashboardPage() {
               >
                 {todoItems.length}
               </motion.div>
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 bg-granny-green text-deep-forest px-4 py-2 rounded-full font-semibold text-sm transition"
-            >
-              <Clock size={16} className="text-deep-forest" />
-              Last 24 hours
             </motion.button>
           </div>
         </div>

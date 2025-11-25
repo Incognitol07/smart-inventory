@@ -4,10 +4,26 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ProductModal from "../components/modals/ProductModal";
+import DeleteProductModal from "../components/modals/DeleteProductModal";
+
+type Product = {
+  id: number;
+  name: string;
+  stock: number;
+  cost: number;
+  price: number;
+  reorderPoint: number;
+  status: string;
+};
 
 export default function InventoryPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Mock inventory data
   const inventoryData = [
@@ -145,6 +161,7 @@ export default function InventoryPage() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => setShowAddModal(true)}
               className="bg-granny-green text-deep-forest px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
             >
               <Plus size={20} />
@@ -241,6 +258,10 @@ export default function InventoryPage() {
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
+                            onClick={() => {
+                              setSelectedProduct(item);
+                              setShowEditModal(true);
+                            }}
                             className="p-2 text-deep-forest/60 hover:text-deep-forest hover:bg-deep-forest/10 rounded"
                           >
                             <Edit size={16} />
@@ -248,6 +269,10 @@ export default function InventoryPage() {
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
+                            onClick={() => {
+                              setSelectedProduct(item);
+                              setShowDeleteModal(true);
+                            }}
                             className="p-2 text-deep-forest/60 hover:text-alert-red hover:bg-alert-red/10 rounded"
                           >
                             <Trash2 size={16} />
@@ -306,6 +331,38 @@ export default function InventoryPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Modals */}
+      <ProductModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        mode="create"
+        onSubmit={(product) => {
+          console.log("Add product:", product);
+          // Handle adding product
+        }}
+      />
+
+      <ProductModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        mode="edit"
+        product={selectedProduct}
+        onUpdate={(id, updatedProduct) => {
+          console.log("Update product:", id, updatedProduct);
+          // Handle updating product
+        }}
+      />
+
+      <DeleteProductModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        product={selectedProduct}
+        onConfirm={(id) => {
+          console.log("Delete product:", id);
+          // Handle deleting product
+        }}
+      />
     </div>
   );
 }

@@ -1,16 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  AlertCircle,
-  TrendingUp,
-  Package,
-  DollarSign,
-  AlertTriangle,
-  Bell,
-  X,
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { TrendingUp, Package, DollarSign, Bell } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -23,6 +15,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useRouter } from "next/navigation";
+import QuickSaleModal from "../components/modals/QuickSaleModal";
+import RestockModal from "../components/modals/RestockModal";
+import NotificationsModal from "../components/modals/NotificationsModal";
 
 type TodoItem = {
   id: number;
@@ -212,91 +207,30 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Notification Modal/Panel */}
-      <AnimatePresence>
-        {showNotifications && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowNotifications(false)}
-              className="fixed inset-0 bg-deep-forest/20 z-40"
-            />
-            {/* Notification Panel */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="fixed top-16 right-6 z-50 w-96 max-h-[600px] bg-white rounded-xl border border-deep-forest/10 shadow-lg overflow-hidden"
-            >
-              <div className="flex items-center justify-between p-4 border-b border-deep-forest/10 bg-granny-green/5">
-                <h3 className="font-bold text-deep-forest flex items-center gap-2">
-                  <AlertCircle size={18} className="text-granny-green" />
-                  Action Items ({todoItems.length})
-                </h3>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowNotifications(false)}
-                  className="p-1 hover:bg-deep-forest/10 rounded transition"
-                >
-                  <X size={18} className="text-deep-forest" />
-                </motion.button>
-              </div>
-              <div className="overflow-y-auto max-h-[550px] space-y-2 p-4">
-                {todoItems.map((item, idx) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    whileHover={{ x: 4 }}
-                    className={`p-3 rounded-lg border-l-4 cursor-pointer transition ${
-                      item.priority === "urgent"
-                        ? "bg-red-50/40 hover:bg-red-50/60"
-                        : item.priority === "high"
-                        ? "bg-granny-green/5 hover:bg-granny-green/10"
-                        : "bg-blue-50/40 hover:bg-blue-50/60"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-deep-forest text-sm mb-1">
-                          {item.title}
-                        </h4>
-                        <p className="text-xs text-deep-forest/70 mb-2 line-clamp-2">
-                          {item.description}
-                        </p>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => {
-                            setSelectedAlert(item);
-                            if (item.action === "Restock now") {
-                              setShowRestockModal(true);
-                            }
-                            // Handle other actions here
-                          }}
-                          className="text-xs font-semibold text-granny-green hover:text-deep-forest transition"
-                        >
-                          {item.action} →
-                        </motion.button>
-                      </div>
-                      {item.priority === "urgent" && (
-                        <AlertTriangle
-                          size={16}
-                          className="text-red-500 shrink-0"
-                        />
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <NotificationsModal
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        actionItems={todoItems.map((item) => ({
+          id: item.id,
+          title: item.title,
+          message: item.description,
+          priority: item.priority,
+          action: item.action,
+        }))}
+        onAction={(item) => {
+          setSelectedAlert({
+            id: item.id,
+            title: item.title,
+            description: item.message,
+            priority: item.priority,
+            action: item.action,
+          });
+          if (item.action === "Restock now") {
+            setShowRestockModal(true);
+          }
+          // Handle other actions here
+        }}
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -453,140 +387,25 @@ export default function DashboardPage() {
       </motion.button>
 
       {/* Quick Sale Modal */}
-      <AnimatePresence>
-        {showQuickSale && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowQuickSale(false)}
-              className="fixed inset-0 bg-deep-forest/20 z-50"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-xl border border-deep-forest/10 shadow-lg z-50 w-96"
-            >
-              <h3 className="text-xl font-bold text-deep-forest mb-4">
-                Quick Sale
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-deep-forest mb-2">
-                    Product
-                  </label>
-                  <select className="w-full p-2 border border-deep-forest/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green">
-                    <option>Select product...</option>
-                    <option>Indomie</option>
-                    <option>Cooking Oil</option>
-                    <option>Coke</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-deep-forest mb-2">
-                    Quantity
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    className="w-full p-2 border border-deep-forest/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green"
-                    placeholder="Enter quantity"
-                  />
-                </div>
-                <div className="flex gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowQuickSale(false)}
-                    className="flex-1 bg-gray-100 text-deep-forest py-2 px-4 rounded-lg font-semibold"
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex-1 bg-granny-green text-deep-forest py-2 px-4 rounded-lg font-semibold"
-                  >
-                    Record Sale
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <QuickSaleModal
+        isOpen={showQuickSale}
+        onClose={() => setShowQuickSale(false)}
+        onSubmit={(sale) => {
+          console.log("Quick sale:", sale);
+          // Handle quick sale submission
+        }}
+      />
 
       {/* Restock Modal */}
-      <AnimatePresence>
-        {showRestockModal && selectedAlert && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowRestockModal(false)}
-              className="fixed inset-0 bg-deep-forest/20 z-50"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-xl border border-deep-forest/10 shadow-lg z-50 w-96"
-            >
-              <h3 className="text-xl font-bold text-deep-forest mb-4">
-                Restock {selectedAlert.title.toLowerCase()}
-              </h3>
-              <div className="space-y-4">
-                <div className="bg-cream p-4 rounded-lg">
-                  <p className="text-deep-forest/70 text-sm">
-                    {selectedAlert.description}
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-deep-forest mb-2">
-                    Order Quantity
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    defaultValue="12"
-                    className="w-full p-2 border border-deep-forest/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-deep-forest mb-2">
-                    Supplier
-                  </label>
-                  <select className="w-full p-2 border border-deep-forest/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green">
-                    <option>ABC Distributors</option>
-                    <option>XYZ Wholesale</option>
-                    <option>Local Supplier</option>
-                  </select>
-                </div>
-                <div className="flex gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowRestockModal(false)}
-                    className="flex-1 bg-gray-100 text-deep-forest py-2 px-4 rounded-lg font-semibold"
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex-1 bg-granny-green text-deep-forest py-2 px-4 rounded-lg font-semibold"
-                  >
-                    Place Order
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <RestockModal
+        isOpen={showRestockModal}
+        onClose={() => setShowRestockModal(false)}
+        alert={selectedAlert}
+        onSubmit={(alertId, quantity) => {
+          console.log("Restock:", alertId, quantity);
+          // Handle restock submission
+        }}
+      />
     </div>
   );
 }

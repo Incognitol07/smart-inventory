@@ -15,6 +15,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import ExportReportModal from "../components/modals/ExportReportModal";
+import TransactionDetailsModal from "../components/modals/TransactionDetailsModal";
 
 type WeeklySale = {
   day: string;
@@ -32,6 +34,9 @@ type MonthlySale = {
 export default function SalesPage() {
   const router = useRouter();
   const [selectedPeriod, setSelectedPeriod] = useState("week");
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [showTransactionModal, setShowTransactionModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
 
   // Mock sales data
   const weeklySales = [
@@ -134,6 +139,7 @@ export default function SalesPage() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => setShowExportModal(true)}
               className="bg-granny-green text-deep-forest px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
             >
               <Download size={20} />
@@ -349,6 +355,22 @@ export default function SalesPage() {
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Modals */}
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={(format, dateRange) => {
+          console.log("Export:", format, dateRange);
+          // Handle export
+        }}
+      />
+
+      <TransactionDetailsModal
+        isOpen={showTransactionModal}
+        onClose={() => setShowTransactionModal(false)}
+        transaction={selectedTransaction}
+      />
     </div>
   );
 }

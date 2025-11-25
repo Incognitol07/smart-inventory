@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ViewExpiringItemsModal from "../components/modals/ViewExpiringItemsModal";
+import RestockModal from "../components/modals/RestockModal";
+import AlertResolutionModal from "../components/modals/AlertResolutionModal";
 
 type AlertItem = {
   id: number;
@@ -20,6 +23,10 @@ export default function AlertsPage() {
   const [filter, setFilter] = useState<"all" | "urgent" | "high" | "medium">(
     "all"
   );
+  const [showViewExpiringModal, setShowViewExpiringModal] = useState(false);
+  const [showRestockModal, setShowRestockModal] = useState(false);
+  const [showResolveModal, setShowResolveModal] = useState(false);
+  const [selectedAlert, setSelectedAlert] = useState<AlertItem | null>(null);
 
   // Mock alerts data
   const [alerts, setAlerts] = useState<AlertItem[]>([
@@ -75,32 +82,6 @@ export default function AlertsPage() {
         alert.id === id ? { ...alert, status: "resolved" as const } : alert
       )
     );
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "urgent":
-        return "bg-red-50/40 border-red-200";
-      case "high":
-        return "bg-granny-green/10 border-granny-green/20";
-      case "medium":
-        return "bg-blue-50/40 border-blue-200";
-      default:
-        return "bg-gray-50 border-gray-200";
-    }
-  };
-
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case "urgent":
-        return <AlertTriangle size={16} className="text-red-500" />;
-      case "high":
-        return <AlertCircle size={16} className="text-granny-green" />;
-      case "medium":
-        return <Clock size={16} className="text-blue-500" />;
-      default:
-        return <AlertCircle size={16} className="text-gray-500" />;
-    }
   };
 
   return (
@@ -239,13 +220,11 @@ export default function AlertsPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className={`p-6 rounded-xl border-l-4 ${getPriorityColor(
-                  alert.priority
-                )} ${alert.status === "resolved" ? "opacity-60" : ""}`}
+                className={`p-6 rounded-xl border border-deep-forest/20`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3 flex-1">
-                    {getPriorityIcon(alert.priority)}
+                    <div className={`w-3 h-3 rounded-full mt-1`}></div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold text-deep-forest text-lg">
@@ -288,6 +267,14 @@ export default function AlertsPage() {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            setSelectedAlert(alert);
+                            if (alert.action === "View list") {
+                              setShowViewExpiringModal(true);
+                            } else if (alert.action === "Restock now") {
+                              setShowRestockModal(true);
+                            }
+                          }}
                           className="px-4 py-2 bg-granny-green text-deep-forest rounded-lg font-semibold text-sm"
                         >
                           {alert.action}
@@ -295,7 +282,10 @@ export default function AlertsPage() {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => handleResolveAlert(alert.id)}
+                          onClick={() => {
+                            setSelectedAlert(alert);
+                            setShowResolveModal(true);
+                          }}
                           className="px-4 py-2 border border-deep-forest/20 text-deep-forest rounded-lg font-semibold text-sm hover:bg-deep-forest/5"
                         >
                           Mark Done
@@ -378,6 +368,47 @@ export default function AlertsPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Modals */}
+      <ViewExpiringItemsModal
+        isOpen={showViewExpiringModal}
+        onClose={() => setShowViewExpiringModal(false)}
+        items={[
+          {
+            id: 1,
+            name: "Milk",
+            quantity: 5,
+            expiryDate: new Date("2025-12-01"),
+            value: 2500,
+          },
+          {
+            id: 2,
+            name: "Bread",
+            quantity: 3,
+            expiryDate: new Date("2025-11-30"),
+            value: 1200,
+          },
+        ]}
+      />
+
+      <RestockModal
+        isOpen={showRestockModal}
+        onClose={() => setShowRestockModal(false)}
+        alert={selectedAlert}
+        onSubmit={(alertId: number, quantity: number) => {
+          console.log("Restock:", alertId, quantity);
+          // Handle restock
+        }}
+      />
+
+      <AlertResolutionModal
+        isOpen={showResolveModal}
+        onClose={() => setShowResolveModal(false)}
+        alert={selectedAlert}
+        onResolve={(alertId) => {
+          handleResolveAlert(alertId);
+        }}
+      />
     </div>
   );
 }

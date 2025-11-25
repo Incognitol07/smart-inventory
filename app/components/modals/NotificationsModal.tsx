@@ -39,26 +39,25 @@ export default function NotificationsModal({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="fixed top-0 right-0 z-60 w-96 h-full bg-white border-l border-deep-forest/10 shadow-lg overflow-hidden"
+            className="fixed top-16 right-6 z-60 w-96 max-h-[600px] bg-white rounded-xl border border-deep-forest/10 shadow-lg overflow-hidden"
           >
-            <div className="flex flex-col h-full">
-              <div className="flex items-center justify-between p-4 border-b border-deep-forest/10 bg-granny-green/5">
-                <div className="flex items-center gap-2">
-                  <Bell size={20} className="text-deep-forest" />
-                  <h3 className="font-semibold text-deep-forest">
-                    Notifications
-                  </h3>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={onClose}
-                  className="p-1 hover:bg-deep-forest/10 rounded"
-                >
-                  <X size={20} className="text-deep-forest" />
-                </motion.button>
+            <div className="flex items-center justify-between p-4 border-b border-deep-forest/10 bg-granny-green/5">
+              <div className="flex items-center gap-2">
+                <Bell size={20} className="text-deep-forest" />
+                <h3 className="font-semibold text-deep-forest">
+                  Notifications
+                </h3>
               </div>
-              <div className="flex-1 overflow-y-auto p-4">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onClose}
+                className="p-1 hover:bg-deep-forest/10 rounded"
+              >
+                <X size={20} className="text-deep-forest" />
+              </motion.button>
+            </div>
+            <div className="overflow-y-auto max-h-[550px] space-y-2 p-4">
               {actionItems.length === 0 ? (
                 <div className="text-center py-8">
                   <Bell
@@ -75,7 +74,7 @@ export default function NotificationsModal({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
                     whileHover={{ x: 4 }}
-                    className={`p-3 rounded-lg border-l-4 cursor-pointer transition mb-2 ${
+                    className={`p-3 rounded-lg border-l-4 cursor-pointer transition ${
                       item.priority === "urgent"
                         ? "bg-red-50/40 hover:bg-red-50/60"
                         : item.priority === "high"
@@ -107,7 +106,6 @@ export default function NotificationsModal({
                   </motion.div>
                 ))
               )}
-            </div>
             </div>
           </motion.div>
         </>

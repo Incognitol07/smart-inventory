@@ -33,13 +33,13 @@ export default function NotificationsModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-deep-forest/20 z-40"
+            className="fixed inset-0 bg-deep-forest/20 z-55"
           />
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="fixed top-16 right-6 z-50 w-96 max-h-[600px] bg-white rounded-xl border border-deep-forest/10 shadow-lg overflow-hidden"
+            className="fixed top-16 right-6 z-60 w-96 max-h-[600px] bg-white rounded-xl border border-deep-forest/10 shadow-lg overflow-hidden"
           >
             <div className="flex items-center justify-between p-4 border-b border-deep-forest/10 bg-granny-green/5">
               <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export default function NotificationsModal({
               ) : (
                 actionItems.map((item, idx) => (
                   <motion.div
-                   key={item.id}
+                    key={item.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}

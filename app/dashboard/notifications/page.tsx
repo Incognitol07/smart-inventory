@@ -24,7 +24,9 @@ export default function NotificationsPage() {
   const [showViewExpiringModal, setShowViewExpiringModal] = useState(false);
   const [showRestockModal, setShowRestockModal] = useState(false);
   const [showResolveModal, setShowResolveModal] = useState(false);
-  const [selectedAlert, setSelectedAlert] = useState<NotificationItem | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<NotificationItem | null>(
+    null
+  );
 
   // Mock notifications data
   const [notifications, setNotifications] = useState<NotificationItem[]>([
@@ -85,32 +87,30 @@ export default function NotificationsPage() {
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-deep-forest mb-2">
+              <h1 className="text-3xl sm:text-4xl font-bold text-deep-forest mb-2">
                 Notifications
               </h1>
-              <p className="text-deep-forest/60">
-                Manage your notifications
-              </p>
+              <p className="text-deep-forest/60">Manage your notifications</p>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-deep-forest/60">
-                {notifications.filter((a) => a.status === "active").length} active
-                notifications
+                {notifications.filter((a) => a.status === "active").length}{" "}
+                active notifications
               </span>
             </div>
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-2 sm:gap-4">
             {[
               { key: "all", label: "All Alerts", count: notifications.length },
               {
@@ -142,7 +142,7 @@ export default function NotificationsPage() {
                 onClick={() =>
                   setFilter(tab.key as "all" | "urgent" | "high" | "medium")
                 }
-                className={`px-4 py-2 rounded-lg font-semibold flex items-center gap-2 ${
+                className={`px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm sm:text-base flex items-center gap-2 ${
                   filter === tab.key
                     ? "bg-granny-green text-deep-forest"
                     : "bg-white text-deep-forest border border-deep-forest/20"
@@ -170,10 +170,10 @@ export default function NotificationsPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className={`p-6 rounded-xl border border-deep-forest/20`}
+                className={`p-4 sm:p-6 rounded-xl border border-deep-forest/20`}
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3 flex-1">
+                <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                  <div className="flex items-start gap-3 flex-1 w-full">
                     <div className={`w-3 h-3 rounded-full mt-1`}></div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
@@ -211,7 +211,7 @@ export default function NotificationsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 w-full sm:w-auto">
                     {alert.status === "active" && (
                       <>
                         <motion.button
@@ -225,7 +225,7 @@ export default function NotificationsPage() {
                               setShowRestockModal(true);
                             }
                           }}
-                          className="px-4 py-2 bg-granny-green text-deep-forest rounded-lg font-semibold text-sm"
+                          className="flex-1 sm:flex-none px-4 py-2 bg-granny-green text-deep-forest rounded-lg font-semibold text-sm"
                         >
                           {alert.action}
                         </motion.button>
@@ -236,7 +236,7 @@ export default function NotificationsPage() {
                             setSelectedAlert(alert);
                             setShowResolveModal(true);
                           }}
-                          className="px-4 py-2 border border-deep-forest/20 text-deep-forest rounded-lg font-semibold text-sm hover:bg-deep-forest/5"
+                          className="flex-1 sm:flex-none px-4 py-2 border border-deep-forest/20 text-deep-forest rounded-lg font-semibold text-sm hover:bg-deep-forest/5"
                         >
                           Mark Done
                         </motion.button>
@@ -273,7 +273,7 @@ export default function NotificationsPage() {
           )}
 
           {/* Summary Stats */}
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {
                 label: "Active Alerts",

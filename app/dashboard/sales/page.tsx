@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, DollarSign, Calendar, Download } from "lucide-react";
+import { TrendingUp, DollarSign, Calendar, Download, Loader2 } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -16,54 +16,149 @@ import {
 } from "recharts";
 import ExportReportModal from "../../components/modals/ExportReportModal";
 import ContextTooltip from "../../components/shared/ContextTooltip";
+import axios from "axios";
 
-type WeeklySale = {
-  day: string;
-  sales: number;
-  profit: number;
-  transactions: number;
-};
+type SaleItem = {
+    id: string;
+    quantity: number;
+    priceAtSale: number;
+    costAtSale: number;
+    product: {
+        name: string;
+    }
+}
 
-type MonthlySale = {
-  month: string;
-  sales: number;
-  profit: number;
-  transactions?: number;
-};
+type Sale = {
+    id: string;
+    date: string; // ISO date string from API
+    totalAmount: number;
+    totalProfit: number;
+    items: SaleItem[];
+}
+
+// Chart data types
+type ChartDataPoint = {
+    dayOrMonth: string; // "Mon", "Jan", etc.
+    sales: number;
+    profit: number;
+    transactions: number;
+}
+
 
 export default function SalesPage() {
-  const [selectedPeriod, setSelectedPeriod] = useState("week");
+  const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month">("week");
   const [showExportModal, setShowExportModal] = useState(false);
-  // Mock sales data
-  const weeklySales = [
-    { day: "Mon", sales: 2400, profit: 1200, transactions: 24 },
-    { day: "Tue", sales: 2210, profit: 1000, transactions: 22 },
-    { day: "Wed", sales: 2290, profit: 1100, transactions: 23 },
-    { day: "Thu", sales: 2000, profit: 900, transactions: 20 },
-    { day: "Fri", sales: 2181, profit: 1300, transactions: 25 },
-    { day: "Sat", sales: 2500, profit: 1400, transactions: 28 },
-    { day: "Sun", sales: 2100, profit: 1200, transactions: 21 },
-  ];
+  const [sales, setSales] = useState<Sale[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchSales = async () => {
+        try {
+            setLoading(true);
+            const res = await axios.get("/api/sales");
+            setSales(res.data);
+        } catch (error) {
+            console.error("Failed to fetch sales", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchSales();
+  }, []);
 
-  const monthlySales = [
-    { month: "Jan", sales: 45000, profit: 18000 },
-    { month: "Feb", sales: 52000, profit: 21000 },
-    { month: "Mar", sales: 48000, profit: 19000 },
-    { month: "Apr", sales: 55000, profit: 22000 },
-    { month: "May", sales: 60000, profit: 24000 },
-    { month: "Jun", sales: 58000, profit: 23000 },
-  ];
+  const processSalesData = (): ChartDataPoint[] => {
+      // Group by day for this week or month
+      // Simple logic: filter sales by selected period then group
+      const now = new Date();
+      const oneWeekAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+      const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
 
-  const topProducts = [
-    { name: "Indomie Noodles", sold: 145, revenue: 21750, profit: 4350 },
-    { name: "Cooking Oil", sold: 32, revenue: 32000, profit: 6400 },
-    { name: "Coke 50cl", sold: 89, revenue: 17800, profit: 3560 },
-    { name: "Peak Milk", sold: 45, revenue: 22500, profit: 4500 },
-    { name: "Bread", sold: 67, revenue: 26800, profit: 5360 },
-  ];
+      const cutoff = selectedPeriod === "week" ? oneWeekAgo : oneMonthAgo;
 
-  const salesData: (WeeklySale | MonthlySale)[] =
-    selectedPeriod === "week" ? weeklySales : monthlySales;
+      const filteredSales = sales.filter(s => new Date(s.date) >= cutoff);
+      
+      const groupedData: Record<string, ChartDataPoint> = {};
+
+      // Initialize map based on period to ensure all days/months exist even if 0 sales?
+      // For simplicity, just grouping existing sales. For better UX, we'd fill gaps.
+      // Let's iterate sales and group.
+
+      filteredSales.forEach(sale => {
+          const date = new Date(sale.date);
+          let key = "";
+          if (selectedPeriod === "week") {
+             // Mon, Tue...
+             key = date.toLocaleDateString('en-US', { weekday: 'short' });
+          } else {
+             // Jan, Feb... (Or Day of Month: 1, 2, 3..?)
+             // UI mock used Month names "Jan, Feb". If "This Month" usually implies filtering for current month and showing DAYS 1-30.
+             // OR "Past 6/12 months".
+             // The UI mock had "Jan, Feb, Mar, Apr, May, Jun". That looks like a "Year" view or "past 6 months".
+             // Let's assume user wants "Past 30 days" grouped by day if "month" or "Past 7 days" grouped by day if "week".
+             // Wait, the Mock UI labeled the button "This Month" but showed multiple months data. 
+             // Let's stick to:
+             // "Week" = Past 7 days (grouped by Day Name)
+             // "Month" = Past 30 days (grouped by Date e.g "1st", "2nd")
+             // OR to match chart mock strictly: "Month" could mean "Year to Date".
+             // Given the button says "This Month", showing daily breakdown of current month makes most sense for a retailer.
+             key = date.getDate().toString();
+          }
+
+          if (!groupedData[key]) {
+              groupedData[key] = { dayOrMonth: key, sales: 0, profit: 0, transactions: 0 };
+          }
+          groupedData[key].sales += sale.totalAmount;
+          groupedData[key].profit += sale.totalProfit;
+          groupedData[key].transactions += 1;
+      });
+
+      // Convert to array and sort? 
+      // Sorting purely by key string might fail for days (Mon vs Fri).
+      // We can just return values for now, chart handles order if we provide it sorted.
+      // For MVP simplicity, just returning whatever key order.
+      return Object.values(groupedData);
+  };
+
+  const chartData = processSalesData();
+  
+  // Calculate top products explicitly from ALL filtered sales in period
+  const getTopProducts = () => {
+      const now = new Date();
+      const cutoff = selectedPeriod === "week" 
+          ? new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7)
+          : new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()); // Past 30 days
+
+      const filteredSales = sales.filter(s => new Date(s.date) >= cutoff);
+      const productStats: Record<string, { name: string, sold: number, revenue: number, profit: number }> = {};
+      
+      filteredSales.forEach(sale => {
+          sale.items.forEach(item => {
+              const name = item.product?.name || "Unknown";
+              if (!productStats[name]) {
+                  productStats[name] = { name, sold: 0, revenue: 0, profit: 0 };
+              }
+              productStats[name].sold += item.quantity;
+              productStats[name].revenue += (item.priceAtSale * item.quantity);
+              productStats[name].profit += ((item.priceAtSale - item.costAtSale) * item.quantity);
+          });
+      });
+      
+      return Object.values(productStats).sort((a, b) => b.sold - a.sold).slice(0, 5);
+  };
+
+  const topProducts = getTopProducts();
+  const rawTotalSales = chartData.reduce((acc, curr) => acc + curr.sales, 0);
+  const rawTotalProfit = chartData.reduce((acc, curr) => acc + curr.profit, 0);
+  const rawTotalTrans = chartData.reduce((acc, curr) => acc + curr.transactions, 0);
+
+
+  if (loading) {
+      return (
+          <div className="min-h-screen bg-cream flex items-center justify-center">
+              <Loader2 className="animate-spin text-deep-forest" size={48} />
+          </div>
+      );
+  }
 
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
@@ -128,42 +223,25 @@ export default function SalesPage() {
             {[
               {
                 label: "Money In (Sales)",
-                value: `₦${salesData
-                  .reduce((sum, item) => sum + item.sales, 0)
-                  .toLocaleString()}`,
+                value: `₦${rawTotalSales.toLocaleString()}`,
                 icon: DollarSign,
                 tooltip: "Total amount collected from customers before any expenses."
               },
               {
                 label: "Money You Keep (Profit)",
-                value: `₦${salesData
-                  .reduce((sum, item) => sum + item.profit, 0)
-                  .toLocaleString()}`,
+                value: `₦${rawTotalProfit.toLocaleString()}`,
                 icon: TrendingUp,
                 tooltip: "The actual profit remaining after subtracting the cost of goods."
               },
               {
                 label: "Number of Sales",
-                value:
-                  selectedPeriod === "week"
-                    ? (salesData as WeeklySale[])
-                        .reduce((sum, item) => sum + item.transactions, 0)
-                        .toString()
-                    : "N/A",
+                value: rawTotalTrans.toString(),
                 icon: Calendar,
                  tooltip: "Total number of individual times a customer bought something."
               },
               {
                 label: "Avg. Spend per Person",
-                value: `₦${Math.round(
-                  salesData.reduce((sum, item) => sum + item.sales, 0) /
-                    (selectedPeriod === "week"
-                      ? (salesData as WeeklySale[]).reduce(
-                          (sum, item) => sum + item.transactions,
-                          0
-                        )
-                      : salesData.length)
-                )}`,
+                value: `₦${Math.round(rawTotalSales / (rawTotalTrans || 1)).toLocaleString()}`,
                 icon: DollarSign,
                 tooltip: "On average, how much one customer spends in a single visit."
               },
@@ -203,10 +281,10 @@ export default function SalesPage() {
               </div>
               
               <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={salesData}>
+                <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2d5f3f10" />
                   <XAxis
-                    dataKey={selectedPeriod === "week" ? "day" : "month"}
+                    dataKey="dayOrMonth"
                     stroke="#2d5f3f60"
                   />
                   <YAxis stroke="#2d5f3f60" />
@@ -241,10 +319,10 @@ export default function SalesPage() {
                  <ContextTooltip content="Visual tracking of your daily profit." />
               </div>
               <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={salesData}>
+                <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2d5f3f10" />
                   <XAxis
-                    dataKey={selectedPeriod === "week" ? "day" : "month"}
+                    dataKey="dayOrMonth"
                     stroke="#2d5f3f60"
                   />
                   <YAxis stroke="#2d5f3f60" />
@@ -322,6 +400,13 @@ export default function SalesPage() {
                       </td>
                     </motion.tr>
                   ))}
+                  {topProducts.length === 0 && (
+                      <tr>
+                          <td colSpan={4} className="text-center py-8 text-deep-forest/60">
+                              No sales records found for this period.
+                          </td>
+                      </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -365,6 +450,11 @@ export default function SalesPage() {
                 </div>
               </motion.div>
             ))}
+             {topProducts.length === 0 && (
+                  <div className="text-center py-8 text-deep-forest/60">
+                      No sales records found for this period.
+                  </div>
+              )}
           </div>
         </motion.div>
       </div>

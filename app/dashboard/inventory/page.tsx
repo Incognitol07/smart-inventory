@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Loader2, RefreshCw } from "lucide-react";
 import ProductModal from "../../components/modals/ProductModal";
 import DeleteProductModal from "../../components/modals/DeleteProductModal";
+import axios from "axios";
 
 type Product = {
   id: number;
   name: string;
   stock: number;
-  cost: number;
-  price: number;
+  costPrice: number;
+  sellingPrice: number;
   reorderPoint: number;
-  status: string;
 };
 
 export default function InventoryPage() {
@@ -23,55 +23,71 @@ export default function InventoryPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Mock inventory data
-  const inventoryData = [
-    {
-      id: 1,
-      name: "Indomie Noodles",
-      stock: 45,
-      cost: 120,
-      price: 150,
-      reorderPoint: 20,
-      status: "good",
-    },
-    {
-      id: 2,
-      name: "Cooking Oil",
-      stock: 2,
-      cost: 800,
-      price: 1000,
-      reorderPoint: 5,
-      status: "critical",
-    },
-    {
-      id: 3,
-      name: "Coke 50cl",
-      stock: 12,
-      cost: 150,
-      price: 200,
-      reorderPoint: 10,
-      status: "low",
-    },
-    {
-      id: 4,
-      name: "Peak Milk",
-      stock: 8,
-      cost: 400,
-      price: 500,
-      reorderPoint: 15,
-      status: "low",
-    },
-    {
-      id: 5,
-      name: "Bread",
-      stock: 25,
-      cost: 300,
-      price: 400,
-      reorderPoint: 10,
-      status: "good",
-    },
-  ];
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("/api/products");
+      setProducts(res.data);
+      setError("");
+    } catch (err) {
+      console.error("Failed to fetch products", err);
+      setError("Could not load inventory. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleCreateProduct = async (data: any) => {
+      try {
+          // Map modal data to API expected body
+          // Modal returns: { name, stock, cost, price, reorderPoint }
+          // API expects: { name, stock, cost, price, reorderPoint } -> mapped to costPrice/sellingPrice in server
+          await axios.post("/api/products", data);
+          fetchProducts();
+          setShowAddModal(false);
+      } catch (err) {
+          console.error("Failed to create product", err);
+          alert("Failed to add product");
+      }
+  };
+
+  const handleUpdateProduct = async (id: number, data: any) => {
+      try {
+          // data from modal: { name, stock, cost, price, reorderPoint }
+          await axios.put(`/api/products/${id}`, data);
+          fetchProducts();
+          setShowEditModal(false);
+      } catch (err) {
+          console.error("Failed to update product", err);
+          alert("Failed to update product");
+      }
+  };
+
+  const handleDeleteProduct = async (id: number) => {
+      try {
+          await axios.delete(`/api/products/${id}`);
+          fetchProducts();
+          setShowDeleteModal(false);
+      } catch (err) {
+           console.error("Failed to delete product", err);
+           alert("Failed to delete product");
+      }
+  };
+
+  const getStatus = (product: Product) => {
+      if (product.stock === 0) return "critical";
+      if (product.stock <= product.reorderPoint) return "low";
+      return "good";
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -86,9 +102,17 @@ export default function InventoryPage() {
     }
   };
 
-  const filteredInventory = inventoryData.filter((item) =>
+  const filteredInventory = products.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (loading && products.length === 0) {
+      return (
+          <div className="min-h-screen bg-cream flex items-center justify-center">
+              <Loader2 className="animate-spin text-deep-forest" size={48} />
+          </div>
+      );
+  }
 
   return (
     <div className="min-h-screen bg-cream text-deep-forest">
@@ -121,8 +145,8 @@ export default function InventoryPage() {
           </div>
 
           {/* Search */}
-          <div className="max-w-md">
-            <div className="relative">
+          <div className="max-w-md flex gap-2">
+            <div className="relative flex-1">
               <Search
                 size={20}
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-deep-forest/60"
@@ -135,7 +159,25 @@ export default function InventoryPage() {
                 className="w-full pl-10 pr-4 py-3 border border-deep-forest/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-granny-green"
               />
             </div>
+            <motion.button 
+                whileTap={{ scale: 0.95 }}
+                onClick={fetchProducts} 
+                className="p-3 bg-white border border-deep-forest/10 rounded-lg hover:bg-gray-50 flex items-center justify-center"
+            >
+                <motion.div
+                    animate={{ rotate: loading ? 360 : 0 }}
+                    transition={{ duration: 1, repeat: loading ? Infinity : 0, ease: "linear" }}
+                >
+                    <RefreshCw size={20} className="text-deep-forest/70" />
+                </motion.div>
+            </motion.button>
           </div>
+
+          {error && (
+              <div className="p-4 bg-red-100 text-red-700 rounded-lg">
+                  {error}
+              </div>
+          )}
 
           {/* Inventory Table */}
           <motion.div
@@ -171,7 +213,9 @@ export default function InventoryPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredInventory.map((item, idx) => (
+                  {filteredInventory.map((item, idx) => {
+                    const status = getStatus(item);
+                    return (
                     <motion.tr
                       key={item.id}
                       initial={{ opacity: 0, y: 10 }}
@@ -190,22 +234,22 @@ export default function InventoryPage() {
                         {item.stock}
                       </td>
                       <td className="py-4 px-6 text-deep-forest">
-                        ₦{item.cost}
+                        ₦{item.costPrice.toLocaleString()}
                       </td>
                       <td className="py-4 px-6 text-deep-forest">
-                        ₦{item.price}
+                        ₦{item.sellingPrice.toLocaleString()}
                       </td>
                       <td className="py-4 px-6 text-deep-forest">
-                        ₦{item.price - item.cost}
+                        ₦{(item.sellingPrice - item.costPrice).toLocaleString()}
                       </td>
                       <td className="py-4 px-6">
                         <span
                           className={`font-semibold ${getStatusColor(
-                            item.status
+                            status
                           )}`}
                         >
-                          {item.status.charAt(0).toUpperCase() +
-                            item.status.slice(1)}
+                          {status.charAt(0).toUpperCase() +
+                            status.slice(1)}
                         </span>
                       </td>
                       <td className="py-4 px-6">
@@ -215,6 +259,7 @@ export default function InventoryPage() {
                             whileTap={{ scale: 0.9 }}
                             onClick={(e) => {
                               e.preventDefault();
+                              e.stopPropagation();
                               setSelectedProduct(item);
                               setShowEditModal(true);
                             }}
@@ -225,7 +270,9 @@ export default function InventoryPage() {
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               setSelectedProduct(item);
                               setShowDeleteModal(true);
                             }}
@@ -236,7 +283,14 @@ export default function InventoryPage() {
                         </div>
                       </td>
                     </motion.tr>
-                  ))}
+                  )})}
+                  {filteredInventory.length === 0 && (
+                      <tr>
+                          <td colSpan={7} className="text-center py-8 text-deep-forest/60">
+                              No products found. Add one to get started!
+                          </td>
+                      </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -244,7 +298,9 @@ export default function InventoryPage() {
 
           {/* Mobile Inventory Cards */}
           <div className="md:hidden space-y-4">
-            {filteredInventory.map((item, idx) => (
+            {filteredInventory.map((item, idx) => {
+                 const status = getStatus(item);
+                 return (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -261,9 +317,9 @@ export default function InventoryPage() {
                     {item.name}
                   </h3>
                   <span
-                    className={`font-semibold ${getStatusColor(item.status)}`}
+                    className={`font-semibold ${getStatusColor(status)}`}
                   >
-                    {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -273,18 +329,18 @@ export default function InventoryPage() {
                   </div>
                   <div>
                     <p className="text-deep-forest/60">Cost</p>
-                    <p className="font-medium text-deep-forest">₦{item.cost}</p>
+                    <p className="font-medium text-deep-forest">₦{item.costPrice.toLocaleString()}</p>
                   </div>
                   <div>
                     <p className="text-deep-forest/60">Price</p>
                     <p className="font-medium text-deep-forest">
-                      ₦{item.price}
+                      ₦{item.sellingPrice.toLocaleString()}
                     </p>
                   </div>
                   <div>
                     <p className="text-deep-forest/60">Profit</p>
                     <p className="font-medium text-deep-forest">
-                      ₦{item.price - item.cost}
+                      ₦{(item.sellingPrice - item.costPrice).toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -294,6 +350,7 @@ export default function InventoryPage() {
                     whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       setSelectedProduct(item);
                       setShowEditModal(true);
                     }}
@@ -306,6 +363,7 @@ export default function InventoryPage() {
                     whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       setSelectedProduct(item);
                       setShowDeleteModal(true);
                     }}
@@ -315,7 +373,7 @@ export default function InventoryPage() {
                   </motion.button>
                 </div>
               </motion.div>
-            ))}
+            )})}
           </div>
 
           {/* Summary Stats */}
@@ -323,28 +381,28 @@ export default function InventoryPage() {
             {[
               {
                 label: "Total Products",
-                value: inventoryData.length.toString(),
+                value: products.length.toString(),
               },
               {
                 label: "Low Stock Items",
-                value: inventoryData
-                  .filter((i) => i.status === "low" || i.status === "critical")
+                value: products
+                  .filter((i) => i.stock <= i.reorderPoint)
                   .length.toString(),
               },
               {
                 label: "Total Value",
-                value: `₦${inventoryData
-                  .reduce((sum, item) => sum + item.stock * item.cost, 0)
+                value: `₦${products
+                  .reduce((sum, item) => sum + item.stock * item.costPrice, 0)
                   .toLocaleString()}`,
               },
               {
                 label: "Average Profit",
-                value: `₦${Math.round(
-                  inventoryData.reduce(
-                    (sum, item) => sum + (item.price - item.cost),
+                value: `₦${products.length > 0 ? Math.round(
+                  products.reduce(
+                    (sum, item) => sum + (item.sellingPrice - item.costPrice),
                     0
-                  ) / inventoryData.length
-                )}`,
+                  ) / products.length
+                ).toLocaleString() : 0}`,
               },
             ].map((stat, idx) => (
               <motion.div
@@ -369,26 +427,31 @@ export default function InventoryPage() {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         mode="create"
-        onSubmit={(product) => {
-          console.log("Add product:", product);
-          // Handle adding product
-        }}
+        onSubmit={handleCreateProduct}
       />
 
       <ProductModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
         mode="edit"
-        product={selectedProduct}
-        onUpdate={(id, updatedProduct) => {
-          console.log("Update product:", id, updatedProduct);
-          // Handle updating product
-        }}
+        // Adapt product keys for modal which expects cost vs costPrice
+        product={selectedProduct ? {
+            ...selectedProduct,
+            cost: selectedProduct.costPrice,
+            price: selectedProduct.sellingPrice
+        } : null}
+        onUpdate={handleUpdateProduct}
       />
+      
       <ProductModal
         isOpen={showViewModal}
         mode="view"
-        product={selectedProduct}
+         // Adapt product keys for modal
+        product={selectedProduct ? {
+            ...selectedProduct,
+            cost: selectedProduct.costPrice,
+            price: selectedProduct.sellingPrice
+        } : null}
         onClose={() => {
           setShowViewModal(false);
         }}
@@ -397,11 +460,8 @@ export default function InventoryPage() {
       <DeleteProductModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        product={selectedProduct}
-        onConfirm={(id) => {
-          console.log("Delete product:", id);
-          // Handle deleting product
-        }}
+        product={selectedProduct ? { ...selectedProduct, cost: selectedProduct.costPrice, price: selectedProduct.sellingPrice} : null}
+        onConfirm={(id) => handleDeleteProduct(id)}
       />
     </div>
   );

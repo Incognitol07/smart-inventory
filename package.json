@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "npx prisma db pull && npx prisma generate"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",

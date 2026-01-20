@@ -15,6 +15,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import ExportReportModal from "../../components/modals/ExportReportModal";
+import ContextTooltip from "../../components/shared/ContextTooltip";
 
 type WeeklySale = {
   day: string;
@@ -27,6 +28,7 @@ type MonthlySale = {
   month: string;
   sales: number;
   profit: number;
+  transactions?: number;
 };
 
 export default function SalesPage() {
@@ -76,10 +78,10 @@ export default function SalesPage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold text-deep-forest mb-2">
-                Sales
+                Sales Records
               </h1>
               <p className="text-deep-forest/60">
-                Track your sales performance and revenue
+                Detailed proof of every kobo you made.
               </p>
             </div>
             <motion.button
@@ -89,7 +91,7 @@ export default function SalesPage() {
               className="bg-granny-green text-deep-forest px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
             >
               <Download size={20} />
-              Export Report
+              Download Report
             </motion.button>
           </div>
 
@@ -125,21 +127,23 @@ export default function SalesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {
-                label: "Total Sales",
+                label: "Money In (Sales)",
                 value: `₦${salesData
                   .reduce((sum, item) => sum + item.sales, 0)
                   .toLocaleString()}`,
                 icon: DollarSign,
+                tooltip: "Total amount collected from customers before any expenses."
               },
               {
-                label: "Total Profit",
+                label: "Money You Keep (Profit)",
                 value: `₦${salesData
                   .reduce((sum, item) => sum + item.profit, 0)
                   .toLocaleString()}`,
                 icon: TrendingUp,
+                tooltip: "The actual profit remaining after subtracting the cost of goods."
               },
               {
-                label: "Transactions",
+                label: "Number of Sales",
                 value:
                   selectedPeriod === "week"
                     ? (salesData as WeeklySale[])
@@ -147,9 +151,10 @@ export default function SalesPage() {
                         .toString()
                     : "N/A",
                 icon: Calendar,
+                 tooltip: "Total number of individual times a customer bought something."
               },
               {
-                label: "Avg Transaction",
+                label: "Avg. Spend per Person",
                 value: `₦${Math.round(
                   salesData.reduce((sum, item) => sum + item.sales, 0) /
                     (selectedPeriod === "week"
@@ -160,6 +165,7 @@ export default function SalesPage() {
                       : salesData.length)
                 )}`,
                 icon: DollarSign,
+                tooltip: "On average, how much one customer spends in a single visit."
               },
             ].map((stat, idx) => (
               <motion.div
@@ -167,11 +173,12 @@ export default function SalesPage() {
                 whileHover={{ scale: 1.02 }}
                 className="bg-white p-6 rounded-xl border border-deep-forest/10"
               >
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-2 mb-4">
                   <stat.icon className="text-granny-green" size={24} />
                   <span className="text-sm font-semibold text-deep-forest/60 uppercase tracking-wide">
                     {stat.label}
                   </span>
+                  <ContextTooltip content={stat.tooltip} />
                 </div>
                 <p className="text-3xl font-bold text-deep-forest">
                   {stat.value}
@@ -188,9 +195,13 @@ export default function SalesPage() {
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className="text-lg font-bold text-deep-forest mb-4">
-                {selectedPeriod === "week" ? "Weekly Sales" : "Monthly Sales"}
-              </h3>
+              <div className="flex items-center gap-2 mb-4">
+                 <h3 className="text-lg font-bold text-deep-forest">
+                    {selectedPeriod === "week" ? "Money In (This Week)" : "Money In (This Month)"}
+                 </h3>
+                 <ContextTooltip content="Visual tracking of your daily sales." />
+              </div>
+              
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2d5f3f10" />
@@ -223,9 +234,12 @@ export default function SalesPage() {
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className="text-lg font-bold text-deep-forest mb-4">
-                {selectedPeriod === "week" ? "Weekly Profit" : "Monthly Profit"}
-              </h3>
+              <div className="flex items-center gap-2 mb-4">
+                 <h3 className="text-lg font-bold text-deep-forest">
+                    {selectedPeriod === "week" ? "Profit (This Week)" : "Profit (This Month)"}
+                 </h3>
+                 <ContextTooltip content="Visual tracking of your daily profit." />
+              </div>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2d5f3f10" />
@@ -253,9 +267,13 @@ export default function SalesPage() {
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.3 }}
           >
-            <h3 className="text-lg font-bold text-deep-forest mb-4">
-              Top Selling Products
-            </h3>
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="text-lg font-bold text-deep-forest">
+                 What is selling fast?
+              </h3>
+              <ContextTooltip content="These items are moving the fastest. Watch their stock levels closely." />
+            </div>
+            
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -264,13 +282,22 @@ export default function SalesPage() {
                       Product
                     </th>
                     <th className="text-left py-2 text-deep-forest font-semibold">
-                      Sold
+                      <div className="flex items-center gap-1">
+                          Quantity Sold
+                          <ContextTooltip content="Total units sold in this period" />
+                      </div>
                     </th>
                     <th className="text-left py-2 text-deep-forest font-semibold">
-                      Revenue
+                       <div className="flex items-center gap-1">
+                          Money In
+                          <ContextTooltip content="Total revenue from this item" />
+                      </div>
                     </th>
                     <th className="text-left py-2 text-deep-forest font-semibold">
-                      Profit
+                       <div className="flex items-center gap-1">
+                          Actual Profit
+                          <ContextTooltip content="Total profit from this item" />
+                      </div>
                     </th>
                   </tr>
                 </thead>
@@ -303,7 +330,7 @@ export default function SalesPage() {
           {/* Mobile Top Products Cards */}
           <div className="md:hidden space-y-4">
             <h3 className="text-lg font-bold text-deep-forest mb-4">
-              Top Selling Products
+              What is selling fast?
             </h3>
             {topProducts.map((product, idx) => (
               <motion.div
@@ -318,19 +345,19 @@ export default function SalesPage() {
                 </h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-deep-forest/60">Sold</p>
+                    <p className="text-deep-forest/60">Quantity Sold</p>
                     <p className="font-medium text-deep-forest">
                       {product.sold}
                     </p>
                   </div>
                   <div>
-                    <p className="text-deep-forest/60">Revenue</p>
+                    <p className="text-deep-forest/60">Money In</p>
                     <p className="font-medium text-deep-forest">
                       ₦{product.revenue.toLocaleString()}
                     </p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-deep-forest/60">Profit</p>
+                    <p className="text-deep-forest/60">Actual Profit</p>
                     <p className="font-medium text-deep-forest">
                       ₦{product.profit.toLocaleString()}
                     </p>

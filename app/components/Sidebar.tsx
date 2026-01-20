@@ -199,7 +199,11 @@ export default function Sidebar({
             onViewAll();
             setShowNotifications(false);
           }}
-          isDropdown={true}
+          className={
+            isCollapsed
+              ? "fixed left-20 top-4"
+              : "fixed md:left-72 left-4 top-20 md:top-4" // Mobile: below header, Desktop: side
+          }
         />
         {/* Navigation */}
         <nav className={`flex-1 ${isCollapsed ? "px-2 py-6" : "px-4 py-6"}`}>

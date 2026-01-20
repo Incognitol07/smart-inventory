@@ -17,7 +17,8 @@ interface NotificationsModalProps {
   actionItems: ActionItem[];
   onAction: (item: ActionItem) => void;
   onViewAll?: () => void;
-  isDropdown?: boolean;
+  title?: string;
+  className?: string;
 }
 
 export default function NotificationsModal({
@@ -26,7 +27,8 @@ export default function NotificationsModal({
   actionItems,
   onAction,
   onViewAll,
-  isDropdown = false,
+  title = "Notifications",
+  className = "fixed top-16 right-6",
 }: NotificationsModalProps) {
   return (
     <AnimatePresence>
@@ -40,18 +42,16 @@ export default function NotificationsModal({
             className="fixed inset-0 bg-deep-forest/20 z-55"
           />
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className={`${
-              isDropdown ? "absolute top-0 left-0" : "fixed top-16 right-6"
-            } z-60 w-96 max-h-[600px] bg-white rounded-xl border border-deep-forest/10 shadow-lg overflow-hidden`}
+            exit={{ opacity: 0, x: -20 }}
+            className={`${className} z-60 w-96 max-h-[600px] bg-white rounded-xl border border-deep-forest/10 shadow-lg overflow-hidden`}
           >
             <div className="flex items-center justify-between p-4 border-b border-deep-forest/10 bg-granny-green/5">
               <div className="flex items-center gap-2">
                 <Bell size={20} className="text-deep-forest" />
                 <h3 className="font-semibold text-deep-forest">
-                  Notifications
+                  {title}
                 </h3>
               </div>
               <motion.button

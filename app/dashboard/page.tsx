@@ -90,7 +90,7 @@ export default function Dashboard() {
                 {getGreeting()}, Owner
               </h1>
               <p className="text-deep-forest/60">
-                Here's what's happening in your shop today.
+                Here&apos;s what&apos;s happening in your shop today.
               </p>
             </div>
             <motion.button

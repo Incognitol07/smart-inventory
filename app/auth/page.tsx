@@ -1,12 +1,12 @@
 "use client";
 
-import type React from "react";
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, ArrowLeft, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import axios from "axios";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -66,16 +66,48 @@ export default function AuthPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    console.log(`${activeTab} attempt:`, formData);
-    setIsLoading(false);
-    setSuccess(true);
-    router.push("/dashboard");
+    try {
+      if (activeTab === "login") {
+        // NextAuth Login
+        const callback = await signIn("credentials", {
+          ...formData,
+          redirect: false,
+        });
 
-    // Reset success after 3 seconds
-    setTimeout(() => setSuccess(false), 3000);
+        if (callback?.error) {
+          setErrors({ email: "Invalid credentials" });
+        } else if (callback?.ok) {
+          setSuccess(true);
+          router.push("/dashboard");
+        }
+      } else {
+        // Registration
+        await axios.post("/api/register", {
+          name: formData.businessName, // Using businessName as name for simplicity or we can split it
+          email: formData.email,
+          password: formData.password,
+          businessName: formData.businessName,
+        });
+
+        // Auto login after registration
+        const callback = await signIn("credentials", {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        });
+
+        if (callback?.ok) {
+          setSuccess(true);
+          router.push("/dashboard");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      setErrors({ email: "Something went wrong. Please try again." });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fadeInUp = {

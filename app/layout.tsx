@@ -13,6 +13,8 @@ export const metadata: Metadata = {
     "Get told what to restock, what's selling, and what's losing you money. Inventory management in plain English.",
 };
 
+import AuthContext from "./context/AuthContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -20,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${comfortaa.className} antialiased`}>{children}</body>
+      <body className={`${comfortaa.className} antialiased`}>
+        <AuthContext>{children}</AuthContext>
+      </body>
     </html>
   );
 }

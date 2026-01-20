@@ -464,8 +464,43 @@ export default function SalesPage() {
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
         onExport={(format, dateRange) => {
-          console.log("Export:", format, dateRange);
-          // Handle export
+            const filtered = sales.filter(s => {
+                const d = new Date(s.date);
+                return d >= dateRange.start && d <= dateRange.end;
+            });
+
+            if (filtered.length === 0) {
+                alert("No records found for this period.");
+                return;
+            }
+
+            if (format === "csv") {
+                const headers = ["Date", "Transaction ID", "Total Amount", "Profit", "Items"];
+                const rows = filtered.map(s => [
+                    new Date(s.date).toLocaleDateString(),
+                    s.id,
+                    s.totalAmount,
+                    s.totalProfit,
+                    s.items.map(i => `${i.product?.name || 'Unknown'} (x${i.quantity})`).join("; ")
+                ]);
+
+                const csvContent = [
+                    headers.join(","),
+                    ...rows.map(r => r.map(c => typeof c === 'string' ? `"${c.replace(/"/g, '""')}"` : c).join(","))
+                ].join("\n");
+
+                const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", `sales_report_${dateRange.start.toISOString().split('T')[0]}_${dateRange.end.toISOString().split('T')[0]}.csv`);
+                link.style.visibility = "hidden";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert("PDF export is coming soon! Please use CSV for now.");
+            }
         }}
       />
     </div>

@@ -39,7 +39,7 @@ export default function NotificationsModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-deep-forest/20 z-55"
+            className="fixed inset-0 bg-deep-forest/20 z-55 backdrop-blur-sm"
           />
           <motion.div
             initial={{ opacity: 0, x: -20 }}

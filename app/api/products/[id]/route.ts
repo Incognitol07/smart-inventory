@@ -5,7 +5,7 @@ import { prisma } from "../../../database/client";
 
 export async function PUT(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -18,7 +18,8 @@ export async function PUT(
         const { name, stock, cost, price, reorderPoint } = body;
         // params.id is a string, but our DB ID is Int (from schema.prisma: id Int @id @default(autoincrement()))
         // We need to parse it.
-        const productId = parseInt(params.id);
+        const { id } = await params;
+        const productId = parseInt(id);
 
         if (isNaN(productId)) {
             return new NextResponse("Invalid ID", { status: 400 });
@@ -50,7 +51,7 @@ export async function PUT(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -59,7 +60,8 @@ export async function DELETE(
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const productId = parseInt(params.id);
+        const { id } = await params;
+        const productId = parseInt(id);
 
         if (isNaN(productId)) {
             return new NextResponse("Invalid ID", { status: 400 });

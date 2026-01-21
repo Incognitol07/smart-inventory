@@ -17,19 +17,25 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { budget, periodDays = 30 } = body;
 
-        if (!budget || typeof budget !== 'number') {
+        if (!budget || typeof budget !== 'number' || budget <= 0) {
             return new NextResponse("Invalid budget provided", { status: 400 });
         }
         
-        console.log(`[ADVISOR] Starting optimization. Budget: ₦${budget}, Period: ${periodDays} days`);
+        console.log(`[ADVISOR] Budget: ₦${budget}, Period: ${periodDays} days`);
 
         // 1. Fetch Products
         const products = await prisma.product.findMany({
             where: { userId: user.id }
         });
-        console.log(`[ADVISOR] Found ${products.length} products associated with user.`);
 
-        // 2. Fetch Sales History (Last 90 days for velocity calculation)
+        if (products.length === 0) {
+            return NextResponse.json({
+                recommendations: [],
+                summary: { totalCost: 0, totalExpectedProfit: 0, budgetUtilization: 0 }
+            });
+        }
+
+        // 2. Fetch Sales History (Last 90 days)
         const ninetyDaysAgo = new Date();
         ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
@@ -37,15 +43,12 @@ export async function POST(req: Request) {
             where: {
                 sale: {
                     userId: user.id,
-                    date: {
-                        gte: ninetyDaysAgo
-                    }
+                    date: { gte: ninetyDaysAgo }
                 }
             }
         });
-        console.log(`[ADVISOR] Analyzed ${recentSales.length} sales records from the last 90 days.`);
 
-        // 3. Calculate Velocity & Demand Forecast
+        // 3. Calculate Stats & Demand ONCE
         const productStats = new Map<number, { totalSold: number }>();
         
         recentSales.forEach(item => {
@@ -54,107 +57,163 @@ export async function POST(req: Request) {
             productStats.set(item.productId, current);
         });
 
-        const variables: Record<string, any> = {};
-
-        console.log("[ADVISOR] Calculating demand forecasts and building variables...");
-
-        products.forEach(p => {
+        // 4. Build enriched product data with demand forecasts
+        const enrichedProducts = products.map(p => {
             const stats = productStats.get(p.id) || { totalSold: 0 };
-            // Simple velocity: Total Sold / 90 days (or simple daily avg)
-            // If totalSold is 0, we can give it a small minimum demand if we want to encourage trying new stock, 
-            // OR strictly stick to data. Let's stick to data but allow a minimum of 1 if stock is 0? 
-            // Let's stick to data for "Optimization".
             
-            const dailyVelocity = stats.totalSold / 90;
-            const forecastedDemand = Math.max(Math.ceil(dailyVelocity * periodDays), 1); // Ensure at least 1 if it has sold before? or just raw. 
-            // Let's say if no sales history, demand is 0? Or maybe we assume new products need stock.
-            // For now: ceil(velocity * period). If 0 sales, 0 demand.
+            // Calculate how long product has existed (max 90 days for velocity calc)
+            const daysInBusiness = Math.max(
+                1, 
+                Math.ceil((Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24))
+            );
+            const activeDays = Math.min(daysInBusiness, 90);
             
-            // Only consider restocking if we can afford at least one
-            if (p.costPrice <= budget) {
-                 variables[p.name] = {
-                     id: p.id,
-                     profit: (p.sellingPrice - p.costPrice),
-                     cost: p.costPrice,
-                     // Constraints
-                     budget: p.costPrice, 
-                     [p.name]: 1 // For max bound
-                 };
+            // Calculate velocity
+            let dailyVelocity = stats.totalSold / activeDays;
+            
+            // For new products with no sales, assume minimal baseline demand
+            if (stats.totalSold === 0) {
+                dailyVelocity = 0.3; // Conservative: sells 1 unit every ~3 days
             }
+            
+            // Forecast demand for the period
+            let forecastedDemand = Math.ceil(dailyVelocity * periodDays);
+            
+            // Apply intelligent minimum shelf level based on product price
+            const minShelfLevel = p.costPrice > 20000 ? 2 :  // Expensive items
+                                  p.costPrice > 5000 ? 5 :    // Mid-range
+                                  8;                           // Low-cost items
+            
+            forecastedDemand = Math.max(forecastedDemand, minShelfLevel);
+            
+            // Calculate how much we need to restock
+            // Restock up to forecasted demand level (don't overstock beyond forecast)
+            const restockNeeded = Math.max(0, forecastedDemand - p.stock);
+            
+            const profitPerUnit = p.sellingPrice - p.costPrice;
+            
+            return {
+                ...p,
+                dailyVelocity,
+                forecastedDemand,
+                restockNeeded,
+                profitPerUnit,
+                roi: profitPerUnit / p.costPrice // For sorting/debugging
+            };
         });
-        console.log(`[ADVISOR] Considered ${Object.keys(variables).length} products for optimization (affordable & valid).`);
 
-        // 4. Build LP Model
-        // We want to Maximize Profit
+        // 5. Filter products we can actually afford and need to restock
+        const viableProducts = enrichedProducts.filter(p => 
+            p.costPrice <= budget && 
+            p.restockNeeded > 0 &&
+            p.profitPerUnit > 0 // Don't stock loss-making items
+        );
+
+        console.log(`[ADVISOR] ${viableProducts.length}/${products.length} products viable for optimization`);
+
+        if (viableProducts.length === 0) {
+            return NextResponse.json({
+                recommendations: [],
+                summary: { 
+                    totalCost: 0, 
+                    totalExpectedProfit: 0, 
+                    budgetUtilization: 0,
+                    message: "No products need restocking or all exceed budget"
+                }
+            });
+        }
+
+        // 6. Build LP Model
+        const variables: Record<string, any> = {};
+        const constraints: Record<string, any> = { budget: { max: budget } };
+        const ints: Record<string, number> = {};
+
+        viableProducts.forEach(p => {
+            const varName = `product_${p.id}`; // Use ID instead of name to avoid duplicates
+            
+            variables[varName] = {
+                productId: p.id,
+                profit: p.profitPerUnit,
+                budget: p.costPrice,
+                [varName]: 1 // Self-constraint for max bound
+            };
+            
+            // Max units = restock needed (don't exceed forecasted demand)
+            constraints[varName] = { max: p.restockNeeded };
+            
+            // Ensure integer quantities
+            ints[varName] = 1;
+        });
+
         const model = {
             optimize: "profit",
             opType: "max" as const,
-            constraints: {
-                budget: { max: budget },
-                ...Object.fromEntries(
-                    products.map(p => {
-                         const stats = productStats.get(p.id) || { totalSold: 0 };
-                         const dailyVelocity = stats.totalSold / 90;
-
-                         // ENHANCEMENT: Enforce a "Minimum Shelf Level" (Safety Stock)
-                         // Even if sales are low, successful retail requires a full-looking shelf.
-                         // We ensure at least 10 units are demanded to keep shelves stocked.
-                         const MIN_SHELF_LEVEL = 10;
-                         let demand = Math.ceil(dailyVelocity * periodDays);
-                         
-                         // If calculated demand is low, boost it to the minimum shelf level
-                         demand = Math.max(demand, MIN_SHELF_LEVEL);
-
-                         const restockLimit = Math.max(0, demand - p.stock);
-                         
-                         return [p.name, { max: restockLimit }];
-                    })
-                )
-            },
-            variables: variables,
-            ints: products.reduce((acc, p) => ({ ...acc, [p.name]: 1 }), {})
+            constraints,
+            variables,
+            ints: ints as Record<string, 1>
         };
 
-        console.log("[ADVISOR] Solving Linear Programming model...");
+        console.log("[ADVISOR] Solving optimization model...");
 
         const result = solver.Solve(model) as any;
-        console.log(`[ADVISOR] Solver Result Status: ${result.feasible ? 'Feasible' : 'Infeasible'}, Result: ${result.result}`);
 
-        // Format result
+        if (!result.feasible) {
+            return NextResponse.json({
+                recommendations: [],
+                summary: { 
+                    totalCost: 0, 
+                    totalExpectedProfit: 0, 
+                    budgetUtilization: 0,
+                    message: "No feasible solution found with current budget"
+                }
+            });
+        }
+
+        // 7. Format Results
         const recommendations = [];
         let totalCost = 0;
         let totalExpectedProfit = 0;
 
-        for (const [key, value] of Object.entries(result)) {
-            if (key === "feasible" || key === "result" || key === "bounded") continue;
+        for (const [varName, quantity] of Object.entries(result)) {
+            if (["feasible", "result", "bounded"].includes(varName)) continue;
             
-            const product = products.find(p => p.name === key);
-            if (product) {
+            const productId = parseInt(varName.replace("product_", ""));
+            const product = enrichedProducts.find(p => p.id === productId);
+            
+            if (product && typeof quantity === 'number' && quantity > 0) {
+                const cost = product.costPrice * quantity;
+                const profit = product.profitPerUnit * quantity;
+                
                 recommendations.push({
                     productId: product.id,
                     name: product.name,
-                    quantity: value,
-                    cost: product.costPrice * (value as number),
-                    profit: (product.sellingPrice - product.costPrice) * (value as number)
+                    quantity,
+                    cost,
+                    profit,
+                    currentStock: product.stock,
+                    forecastedDemand: product.forecastedDemand
                 });
-                totalCost += product.costPrice * (value as number);
-                totalExpectedProfit += (product.sellingPrice - product.costPrice) * (value as number);
+                
+                totalCost += cost;
+                totalExpectedProfit += profit;
             }
         }
 
-        console.log(`[ADVISOR] Generated ${recommendations.length} recommendations. Total Cost: ₦${totalCost}, Expected Profit: ₦${totalExpectedProfit}`);
+        console.log(`[ADVISOR] ${recommendations.length} recommendations, ₦${totalCost} cost, ₦${totalExpectedProfit} profit`);
 
         return NextResponse.json({
-            recommendations: recommendations.sort((a,b) => b.profit - a.profit),
+            recommendations: recommendations.sort((a, b) => b.profit - a.profit),
             summary: {
                 totalCost,
                 totalExpectedProfit,
-                budgetUtilization: (totalCost / budget) * 100
+                budgetUtilization: ((totalCost / budget) * 100),
+                productsAnalyzed: products.length,
+                productsRecommended: recommendations.length
             }
         });
 
     } catch (error: any) {
-        console.log("[ADVISOR_OPTIMIZE]", error);
+        console.error("[ADVISOR_OPTIMIZE]", error);
         return new NextResponse(error.message || "Internal Error", { status: 500 });
     }
 }

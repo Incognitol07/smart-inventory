@@ -143,24 +143,26 @@ export default function InventoryPage() {
                 Manage your products and stock levels
               </p>
             </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowAddModal(true)}
-              className="bg-granny-green text-deep-forest px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
-            >
-              <Plus size={20} />
-              Add Product
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowAdvisorModal(true)}
-              className="bg-white border border-deep-forest/10 text-deep-forest px-6 py-3 rounded-lg font-semibold flex items-center gap-2 hover:bg-gray-50"
-            >
-              <TrendingUp size={20} className="text-deep-forest/70" />
-              Maximize My Profit
-            </motion.button>
+            <div className="flex items-center gap-3">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowAddModal(true)}
+                className="bg-granny-green text-deep-forest px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
+              >
+                <Plus size={20} />
+                Add Product
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowAdvisorModal(true)}
+                className="bg-white border border-deep-forest/10 text-deep-forest px-6 py-3 rounded-lg font-semibold flex items-center gap-2 hover:bg-gray-50"
+              >
+                <TrendingUp size={20} className="text-deep-forest/70" />
+                Maximize My Profit
+              </motion.button>
+            </div>
           </div>
 
           {/* Search */}

@@ -2,15 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  MessageCircle,
-  Send,
-  X,
-  Bot,
-  User,
-  Loader2,
-  Sparkles,
-} from "lucide-react";
+import { MessageCircle, Send, X, Bot, User, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 type Message = {
@@ -96,8 +88,8 @@ export default function AdaChat() {
             {/* Header */}
             <div className="bg-deep-forest p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/10 rounded-lg">
-                  <Sparkles size={20} className="text-granny-green" />
+                <div className="w-8 h-8 flex items-center justify-center bg-granny-green rounded-lg text-deep-forest font-bold font-serif">
+                  A
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-sm">Ada</h3>
@@ -125,14 +117,10 @@ export default function AdaChat() {
                     className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                       msg.role === "user"
                         ? "bg-deep-forest text-white"
-                        : "bg-granny-green text-deep-forest"
+                        : "bg-granny-green text-deep-forest font-bold font-serif"
                     }`}
                   >
-                    {msg.role === "user" ? (
-                      <User size={14} />
-                    ) : (
-                      <Sparkles size={14} />
-                    )}
+                    {msg.role === "user" ? <User size={14} /> : "A"}
                   </div>
                   <div
                     className={`p-3 rounded-2xl text-sm max-w-[80%] ${

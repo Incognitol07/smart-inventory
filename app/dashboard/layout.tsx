@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import RestockModal from "../components/modals/RestockModal";
+import AdaChat from "../components/std/AdaChat";
 
 type TodoItem = {
   id: number;
@@ -94,6 +95,9 @@ export default function DashboardLayout({
             // Handle restock submission
           }}
         />
+
+        {/* AI Business Advisor */}
+        <AdaChat />
       </div>
     </div>
   );

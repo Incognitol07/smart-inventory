@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import RestockModal from "../components/modals/RestockModal";
@@ -11,36 +11,10 @@ type TodoItem = {
   priority: string;
   title: string;
   description: string;
+  message?: string;
   action: string;
 };
 
-// Mock data - should be moved to a shared location eventually
-const todoItems = [
-  {
-    id: 1,
-    priority: "urgent",
-    title: "Restock cooking oil",
-    description:
-      "You have 2 bottles left. You usually sell 5 per week. Restock today or lose ₦15,000 in weekend sales.",
-    action: "Restock now",
-  },
-  {
-    id: 2,
-    priority: "high",
-    title: "Expiring items alert",
-    description:
-      "₦12,600 worth of goods expire in 2 weeks. Move them to the front or mark down 20%.",
-    action: "View list",
-  },
-  {
-    id: 3,
-    priority: "medium",
-    title: "Slow-moving stock",
-    description:
-      "You bought 10 cartons of Peak Milk last month but only sold 4. That's ₦12,000 tied up.",
-    action: "Review",
-  },
-];
 
 export default function DashboardLayout({
   children,
@@ -50,16 +24,34 @@ export default function DashboardLayout({
   const router = useRouter();
   const [showRestockModal, setShowRestockModal] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<TodoItem | null>(null);
+  const [notifications, setNotifications] = useState<TodoItem[]>([]);
+
+  useEffect(() => {
+    // Fetch Smart Notifications
+    fetch("/api/notifications")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          // Normalize data to ensure description is set
+          const normalized = data.map((item: any) => ({
+            ...item,
+            description: item.description || item.message || "",
+          }));
+          setNotifications(normalized);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch notifications", err));
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-cream">
       {/* Sidebar */}
       <Sidebar
-        notificationsCount={todoItems.length}
-        actionItems={todoItems.map((item) => ({
+        notificationsCount={notifications.length}
+        actionItems={notifications.map((item) => ({
           id: item.id,
           title: item.title,
-          message: item.description,
+          message: item.description, // Guaranteed string now
           priority: item.priority,
           action: item.action,
         }))}
@@ -67,7 +59,7 @@ export default function DashboardLayout({
           setSelectedAlert({
             id: item.id,
             title: item.title,
-            description: item.message,
+            description: item.message, // Map back from ActionItem
             priority: item.priority,
             action: item.action,
           });

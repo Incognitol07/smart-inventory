@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import ViewExpiringItemsModal from "../../components/modals/ViewExpiringItemsModal";
@@ -19,57 +19,28 @@ type NotificationItem = {
 
 export default function NotificationsPage() {
   const [filter, setFilter] = useState<"all" | "urgent" | "high" | "medium">(
-    "all"
+    "all",
   );
   const [showViewExpiringModal, setShowViewExpiringModal] = useState(false);
   const [showRestockModal, setShowRestockModal] = useState(false);
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<NotificationItem | null>(
-    null
+    null,
   );
 
-  // Mock notifications data
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    {
-      id: 1,
-      priority: "urgent",
-      title: "Restock cooking oil",
-      description:
-        "You have 2 bottles left. You usually sell 5 per week. Restock today or lose ₦15,000 in weekend sales.",
-      action: "Restock now",
-      status: "active",
-      createdAt: "2025-11-25T10:00:00Z",
-    },
-    {
-      id: 2,
-      priority: "high",
-      title: "Expiring items alert",
-      description:
-        "₦12,600 worth of goods expire in 2 weeks. Move them to the front or mark down 20%.",
-      action: "View list",
-      status: "active",
-      createdAt: "2025-11-25T09:30:00Z",
-    },
-    {
-      id: 3,
-      priority: "medium",
-      title: "Slow-moving stock",
-      description:
-        "You bought 10 cartons of Peak Milk last month but only sold 4. That's ₦12,000 tied up.",
-      action: "Review",
-      status: "active",
-      createdAt: "2025-11-24T14:00:00Z",
-    },
-    {
-      id: 4,
-      priority: "urgent",
-      title: "Low stock: Indomie Noodles",
-      description: "Only 5 packs remaining. Expected to sell out by tomorrow.",
-      action: "Order more",
-      status: "resolved",
-      createdAt: "2025-11-23T16:00:00Z",
-    },
-  ]);
+  // Real notifications data
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+
+  useEffect(() => {
+    fetch("/api/notifications")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setNotifications(data);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch notifications", err));
+  }, []);
 
   const filteredAlerts = notifications.filter((alert) => {
     if (filter === "all") return true;
@@ -79,8 +50,8 @@ export default function NotificationsPage() {
   const handleResolveAlert = (id: number) => {
     setNotifications(
       notifications.map((alert) =>
-        alert.id === id ? { ...alert, status: "resolved" as const } : alert
-      )
+        alert.id === id ? { ...alert, status: "resolved" as const } : alert,
+      ),
     );
   };
 
@@ -117,21 +88,21 @@ export default function NotificationsPage() {
                 key: "urgent",
                 label: "Urgent",
                 count: notifications.filter(
-                  (a) => a.priority === "urgent" && a.status === "active"
+                  (a) => a.priority === "urgent" && a.status === "active",
                 ).length,
               },
               {
                 key: "high",
                 label: "High Priority",
                 count: notifications.filter(
-                  (a) => a.priority === "high" && a.status === "active"
+                  (a) => a.priority === "high" && a.status === "active",
                 ).length,
               },
               {
                 key: "medium",
                 label: "Medium",
                 count: notifications.filter(
-                  (a) => a.priority === "medium" && a.status === "active"
+                  (a) => a.priority === "medium" && a.status === "active",
                 ).length,
               },
             ].map((tab) => (
@@ -200,8 +171,8 @@ export default function NotificationsPage() {
                             alert.priority === "urgent"
                               ? "bg-red-100 text-red-700"
                               : alert.priority === "high"
-                              ? "bg-granny-green/20 text-deep-forest"
-                              : "bg-blue-100 text-blue-700"
+                                ? "bg-granny-green/20 text-deep-forest"
+                                : "bg-blue-100 text-blue-700"
                           }`}
                         >
                           {alert.priority.charAt(0).toUpperCase() +
@@ -286,19 +257,21 @@ export default function NotificationsPage() {
                 label: "Urgent",
                 value: notifications
                   .filter(
-                    (a) => a.priority === "urgent" && a.status === "active"
+                    (a) => a.priority === "urgent" && a.status === "active",
                   )
                   .length.toString(),
                 color: "text-red-500",
               },
               {
-                label: "Resolved Today",
-                value: "2",
+                label: "Total Resolved",
+                value: notifications
+                  .filter((a) => a.status === "resolved")
+                  .length.toString(),
                 color: "text-granny-green",
               },
               {
-                label: "Avg Response Time",
-                value: "4.2 hrs",
+                label: "Total Alerts",
+                value: notifications.length.toString(),
                 color: "text-deep-forest",
               },
             ].map((stat, idx) => (
@@ -323,22 +296,7 @@ export default function NotificationsPage() {
       <ViewExpiringItemsModal
         isOpen={showViewExpiringModal}
         onClose={() => setShowViewExpiringModal(false)}
-        items={[
-          {
-            id: 1,
-            name: "Milk",
-            quantity: 5,
-            expiryDate: new Date("2025-12-01"),
-            value: 2500,
-          },
-          {
-            id: 2,
-            name: "Bread",
-            quantity: 3,
-            expiryDate: new Date("2025-11-30"),
-            value: 1200,
-          },
-        ]}
+        items={[]}
       />
 
       <RestockModal

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { prisma } from "../../database/client";
 import { Prisma } from '../../../generated/prisma/client'
+import { generateSmartAlerts } from "../../lib/services/smart-alerts";
 
 export async function GET(req: Request) {
     try {
@@ -122,6 +123,9 @@ export async function POST(req: Request) {
 
             return sale;
         });
+
+        // Trigger async notification update (fire and forget)
+        generateSmartAlerts(user.id).catch(err => console.error("Background Alert Gen Error:", err));
 
         return NextResponse.json(result);
 

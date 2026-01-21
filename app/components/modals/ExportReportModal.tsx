@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Download, FileText, FileSpreadsheet } from "lucide-react";
+import { X, Download, FileSpreadsheet } from "lucide-react";
 import { useState } from "react";
 
 interface ExportReportModalProps {
@@ -9,7 +9,7 @@ interface ExportReportModalProps {
   onClose: () => void;
   onExport: (
     format: "pdf" | "csv",
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ) => void;
 }
 
@@ -18,9 +18,9 @@ export default function ExportReportModal({
   onClose,
   onExport,
 }: ExportReportModalProps) {
-  const [format, setFormat] = useState<"pdf" | "csv">("pdf");
+  const [format, setFormat] = useState<"pdf" | "csv">("csv");
   const [startDate, setStartDate] = useState(
-    () => new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    () => new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
   ); // 30 days ago
   const [endDate, setEndDate] = useState(() => new Date());
 
@@ -66,29 +66,17 @@ export default function ExportReportModal({
                   Export Format
                 </label>
                 <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="format"
-                      value="pdf"
-                      checked={format === "pdf"}
-                      onChange={(e) => setFormat(e.target.value as "pdf")}
-                      className="text-granny-green focus:ring-granny-green"
-                    />
-                    <FileText size={20} className="text-deep-forest" />
-                    <span className="text-deep-forest">PDF</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
+                  <label className="flex items-center gap-2 cursor-pointer opacity-100">
                     <input
                       type="radio"
                       name="format"
                       value="csv"
-                      checked={format === "csv"}
-                      onChange={(e) => setFormat(e.target.value as "csv")}
+                      checked={true}
+                      readOnly
                       className="text-granny-green focus:ring-granny-green"
                     />
                     <FileSpreadsheet size={20} className="text-deep-forest" />
-                    <span className="text-deep-forest">CSV</span>
+                    <span className="text-deep-forest">CSV (Excel)</span>
                   </label>
                 </div>
               </div>
